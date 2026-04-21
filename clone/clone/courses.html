@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Courses — WildLens</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .featured-course {
+      border-radius: 22px;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      margin-bottom: 4rem;
+      border: 1px solid rgba(124, 179, 66, .2)
+    }
+
+    .fc-img {
+      position: relative;
+      min-height: 340px
+    }
+
+    .fc-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block
+    }
+
+    .fc-img-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, transparent, rgba(8, 12, 9, .5))
+    }
+
+    .fc-body {
+      padding: 2.5rem;
+      background: rgba(22, 51, 32, .4);
+      display: flex;
+      flex-direction: column;
+      justify-content: center
+    }
+
+    .fc-badge {
+      display: inline-block;
+      background: var(--gold);
+      color: var(--black);
+      font-size: .62rem;
+      padding: .3rem .8rem;
+      border-radius: 999px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 1rem
+    }
+
+    .fc-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      margin-bottom: .75rem;
+      line-height: 1.2
+    }
+
+    .fc-desc {
+      font-size: .88rem;
+      color: var(--muted);
+      line-height: 1.75;
+      margin-bottom: 1.5rem
+    }
+
+    .fc-includes {
+      display: flex;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.75rem
+    }
+
+    .fc-inc {
+      font-size: .78rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 5px
+    }
+
+    .fc-inc::before {
+      content: '✓';
+      color: var(--lime);
+      font-weight: 700
+    }
+
+    .fc-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--lime);
+      display: block;
+      line-height: 1
+    }
+
+    .fc-original {
+      font-size: .82rem;
+      color: var(--muted);
+      text-decoration: line-through
+    }
+
+    .fc-save {
+      font-size: .72rem;
+      color: var(--gold);
+      margin: 4px 0 1rem
+    }
+
+    .courses-list {
+      display: flex;
+      flex-direction: column;
+      gap: .85rem;
+      margin-bottom: 4rem
+    }
+
+    .c-item {
+      display: grid;
+      grid-template-columns: 80px 1fr auto;
+      align-items: center;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      background: rgba(255, 255, 255, .02);
+      transition: border-color .3s, transform .3s;
+      cursor: none
+    }
+
+    .c-item:hover {
+      border-color: rgba(124, 179, 66, .3);
+      transform: translateX(4px)
+    }
+
+    .c-thumb {
+      height: 80px;
+      overflow: hidden
+    }
+
+    .c-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block
+    }
+
+    .c-info {
+      padding: 1.1rem 1.25rem
+    }
+
+    .c-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: .3rem
+    }
+
+    .c-meta {
+      font-size: .72rem;
+      color: var(--muted);
+      display: flex;
+      gap: .75rem;
+      flex-wrap: wrap
+    }
+
+    .c-action {
+      padding: 1rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: .35rem;
+      flex-shrink: 0
+    }
+
+    .c-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--lime)
+    }
+
+    .free-tag {
+      color: var(--gold)
+    }
+
+    .expand-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-family: 'Jost', sans-serif;
+      cursor: none;
+      font-size: .72rem;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: color .2s
+    }
+
+    .expand-btn:hover {
+      color: var(--lime)
+    }
+
+    .expand-arrow {
+      display: inline-block;
+      transition: transform .3s
+    }
+
+    .expand-arrow.open {
+      transform: rotate(180deg)
+    }
+
+    .lessons {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .45s ease;
+      border-top: 0
+    }
+
+    .lessons.open {
+      max-height: 500px;
+      border-top: 1px solid var(--border)
+    }
+
+    .lesson-row {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      padding: .7rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      font-size: .82rem;
+      color: var(--muted)
+    }
+
+    .lesson-row:last-child {
+      border-bottom: none
+    }
+
+    .l-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(124, 179, 66, .1);
+      border: 1px solid rgba(124, 179, 66, .25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .6rem;
+      color: var(--lime);
+      flex-shrink: 0
+    }
+
+    .l-free {
+      margin-left: auto;
+      font-size: .6rem;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(124, 179, 66, .1);
+      color: var(--lime)
+    }
+
+    .level-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin: 3.5rem 0 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem
+    }
+
+    .level-badge {
+      font-size: .65rem;
+      padding: .3rem .85rem;
+      border-radius: 999px;
+      font-weight: 500;
+      letter-spacing: .06em
+    }
+
+    .bg {
+      background: rgba(124, 179, 66, .12);
+      color: var(--lime);
+      border: 1px solid rgba(124, 179, 66, .3)
+    }
+
+    .int {
+      background: rgba(200, 169, 81, .12);
+      color: var(--gold);
+      border: 1px solid rgba(200, 169, 81, .3)
+    }
+
+    .adv {
+      background: rgba(220, 80, 80, .12);
+      color: #f87171;
+      border: 1px solid rgba(220, 80, 80, .25)
+    }
+
+    @media(max-width:768px) {
+      .featured-course {
+        grid-template-columns: 1fr
+      }
+
+      .fc-img {
+        min-height: 200px
+      }
+
+      .c-item {
+        grid-template-columns: 1fr
+      }
+
+      .c-thumb {
+        display: none
+      }
+
+      .c-action {
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 1rem 1.25rem
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="cur" id="cur"></div>
+  <div class="cur-r" id="curR"></div>
+  <nav>
+    <a href="index.html" class="logo">Wild<span>Lens</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="courses.html" class="active">Courses</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="videos.html">Videos</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html" class="nav-cta">Contact</a></li>
+    </ul>
+  </nav>
+  <div class="page-hero">
+    <div class="section-label">Learn Photography</div>
+    <h1>Photography <em style="color:var(--gold);font-style:italic">Courses</em></h1>
+    <p>From your first shot to professional-level safari photography — structured courses that actually get results.</p>
+  </div>
+  <section style="padding:5rem 5%">
+    <div class="featured-course fade-up">
+      <div class="fc-img">
+        <img src="https://images.unsplash.com/photo-1612404730960-5c71577fca11?w=800&auto=format&fit=crop&q=85"
+          alt="Masterclass">
+        <div class="fc-img-overlay"></div>
+      </div>
+      <div class="fc-body">
+        <span class="fc-badge">🔥 Most Popular</span>
+        <div class="fc-title">Complete Wildlife Photography Masterclass</div>
+        <p class="fc-desc">The ultimate A-to-Z guide — camera settings, animal behaviour, safari strategy, and Lightroom
+          editing in one complete program.</p>
+        <div class="fc-includes">
+          <span class="fc-inc">30 video lessons</span><span class="fc-inc">Lifetime access</span>
+          <span class="fc-inc">Certificate</span><span class="fc-inc">Community</span>
+        </div>
+        <span class="fc-original">₹8,999</span>
+        <span class="fc-price">₹4,999</span>
+        <span class="fc-save">Save 44% — Limited Offer</span>
+        <a href="contact.html" class="btn btn-primary" style="display:inline-block;width:fit-content">Enroll Now</a>
+      </div>
+    </div>
+
+    <div class="level-head fade-up">
+      <div>
+        <div class="section-label">Level 01</div>
+        <h2 class="section-title">Beginner <em>Courses</em></h2>
+      </div>
+      <span class="level-badge bg">Beginner Friendly</span>
+    </div>
+    <div class="courses-list">
+      <div class="c-item fade-up">
+        <div class="c-thumb"><img
+            src="https://images.unsplash.com/photo-1510771463146-e89e6e86560e?w=200&auto=format&fit=crop&q=80"
+            alt="Camera"></div>
+        <div class="c-info">
+          <div class="c-title">Camera Basics for Wildlife</div>
+          <div class="c-meta"><span>📚 8 Lessons</span><span>⏱ 3.5 hrs</span><span>⭐ 4.9 (234)</span><span
+              class="level-badge bg" style="font-size:.6rem">Beginner</span></div>
+        </div>
+        <div class="c-action"><span class="c-price"><span class="free-tag">FREE</span></span><button class="expand-btn"
+            onclick="toggle('l1','a1')">Lessons <span id="a1" class="expand-arrow">▼</span></button></div>
+      </div>
+      <div class="lessons" id="l1">
+        <div class="lesson-row">
+          <div class="l-num">1</div>Understanding your camera body <span class="l-free">FREE</span>
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">2</div>Aperture, Shutter Speed & ISO <span class="l-free">FREE</span>
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">3</div>Shooting in Manual Mode
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">4</div>Choosing the right lens for wildlife
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">5</div>Autofocus modes for moving animals
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">6</div>White balance & colour science
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">7</div>Memory cards, battery & field prep
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">8</div>Your first wildlife photo assignment
+        </div>
+      </div>
+      <div class="c-item fade-up">
+        <div class="c-thumb"><img
+            src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=200&auto=format&fit=crop&q=80"
+            alt="Nature"></div>
+        <div class="c-info">
+          <div class="c-title">Composition in Nature Photography</div>
+          <div class="c-meta"><span>📚 6 Lessons</span><span>⏱ 2.5 hrs</span><span>⭐ 4.8 (178)</span></div>
+        </div>
+        <div class="c-action"><span class="c-price">₹999</span><button class="expand-btn"
+            onclick="toggle('l2','a2')">Lessons <span id="a2" class="expand-arrow">▼</span></button></div>
+      </div>
+      <div class="lessons" id="l2">
+        <div class="lesson-row">
+          <div class="l-num">1</div>Rule of thirds & the golden ratio <span class="l-free">FREE</span>
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">2</div>Leading lines in landscape
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">3</div>Foreground, midground & background
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">4</div>Framing with natural elements
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">5</div>Symmetry and patterns in wildlife
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">6</div>Breaking the rules creatively
+        </div>
+      </div>
+    </div>
+
+    <div class="level-head fade-up">
+      <div>
+        <div class="section-label">Level 02</div>
+        <h2 class="section-title">Intermediate <em>Courses</em></h2>
+      </div>
+      <span class="level-badge int">Intermediate</span>
+    </div>
+    <div class="courses-list">
+      <div class="c-item fade-up">
+        <div class="c-thumb"><img
+            src="https://images.unsplash.com/photo-1561731216-c3a4d99437d5?w=200&auto=format&fit=crop&q=80" alt="Tiger">
+        </div>
+        <div class="c-info">
+          <div class="c-title">Wildlife Shooting Techniques</div>
+          <div class="c-meta"><span>📚 10 Lessons</span><span>⏱ 5 hrs</span><span>⭐ 4.9 (312)</span><span
+              class="level-badge int" style="font-size:.6rem">Intermediate</span></div>
+        </div>
+        <div class="c-action"><span class="c-price">₹1,999</span><button class="expand-btn"
+            onclick="toggle('l3','a3')">Lessons <span id="a3" class="expand-arrow">▼</span></button></div>
+      </div>
+      <div class="lessons" id="l3">
+        <div class="lesson-row">
+          <div class="l-num">1</div>Animal behaviour & predictive shooting <span class="l-free">FREE</span>
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">2</div>Burst mode & tracking moving animals
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">3</div>Shooting in low light (golden hour)
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">4</div>Birds in flight — settings & technique
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">5</div>Large mammals — safety & distance
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">6</div>Water & reflection shots
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">7</div>Camouflage and patience strategies
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">8</div>Safari vehicle photography
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">9</div>Rainy season & monsoon wildlife
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">10</div>Portfolio shoot: submit for critique
+        </div>
+      </div>
+      <div class="c-item fade-up">
+        <div class="c-thumb"><img
+            src="https://images.unsplash.com/photo-1549366021-9f761d040a94?w=200&auto=format&fit=crop&q=80" alt="Eagle">
+        </div>
+        <div class="c-info">
+          <div class="c-title">Bird Photography Specialist</div>
+          <div class="c-meta"><span>📚 8 Lessons</span><span>⏱ 4 hrs</span><span>⭐ 5.0 (89)</span></div>
+        </div>
+        <div class="c-action"><span class="c-price">₹1,499</span><button class="expand-btn"
+            onclick="toggle('l4','a4')">Lessons <span id="a4" class="expand-arrow">▼</span></button></div>
+      </div>
+      <div class="lessons" id="l4">
+        <div class="lesson-row">
+          <div class="l-num">1</div>Best lenses for bird photography <span class="l-free">FREE</span>
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">2</div>Tracking birds in flight
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">3</div>Migratory birds — where & when
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">4</div>Waterbirds & wetland photography
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">5</div>Raptors — hawks, eagles & owls
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">6</div>Small birds and macro birding
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">7</div>Bird calls & locating subjects
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">8</div>Post-processing bird photos
+        </div>
+      </div>
+    </div>
+
+    <div class="level-head fade-up">
+      <div>
+        <div class="section-label">Level 03</div>
+        <h2 class="section-title">Advanced <em>Courses</em></h2>
+      </div>
+      <span class="level-badge adv">Pro Level</span>
+    </div>
+    <div class="courses-list">
+      <div class="c-item fade-up">
+        <div class="c-thumb"><img
+            src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=200&auto=format&fit=crop&q=80"
+            alt="Editing"></div>
+        <div class="c-info">
+          <div class="c-title">Lightroom & Editing for Wildlife Pros</div>
+          <div class="c-meta"><span>📚 10 Lessons</span><span>⏱ 6 hrs</span><span>⭐ 4.9 (201)</span><span
+              class="level-badge adv" style="font-size:.6rem">Advanced</span></div>
+        </div>
+        <div class="c-action"><span class="c-price">₹2,499</span><button class="expand-btn"
+            onclick="toggle('l5','a5')">Lessons <span id="a5" class="expand-arrow">▼</span></button></div>
+      </div>
+      <div class="lessons" id="l5">
+        <div class="lesson-row">
+          <div class="l-num">1</div>RAW vs JPEG — why RAW wins <span class="l-free">FREE</span>
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">2</div>Lightroom workspace & import workflow
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">3</div>Exposure, shadows & highlights
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">4</div>Colour grading for wildlife moods
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">5</div>Masking & selective adjustments
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">6</div>Noise reduction for low-light shots
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">7</div>Sharpening fur, feathers & eyes
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">8</div>Batch editing for safari shoots
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">9</div>Export for print & web
+        </div>
+        <div class="lesson-row">
+          <div class="l-num">10</div>Building your signature editing style
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand"><a href="index.html" class="logo">Wild<span>Lens</span></a>
+        <p>Wildlife photography education for aspiring naturalists worldwide.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Learn</h4>
+        <ul>
+          <li><a href="courses.html">Courses</a></li>
+          <li><a href="videos.html">Videos</a></li>
+          <li><a href="blog.html">Blog</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="gallery.html">Gallery</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Follow</h4>
+        <ul>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">YouTube</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 WildLens Photography.</p>
+    </div>
+  </footer>
+  <script src="main.js"></script>
+  <script>function toggle(id, arrow) { document.getElementById(id).classList.toggle('open'); document.getElementById(arrow).classList.toggle('open'); }</script>
+</body>
+
+</html>

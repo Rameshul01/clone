@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camera Guide — WildLens</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .guide-hero {
+      padding: 8rem 5% 4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden
+    }
+
+    .guide-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 80%, rgba(31, 74, 44, .4), transparent 65%);
+      pointer-events: none
+    }
+
+    .guide-hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 6vw, 5rem);
+      font-weight: 900;
+      line-height: .95;
+      margin-bottom: 1rem;
+      position: relative
+    }
+
+    .guide-hero p {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 500px;
+      margin: 0 auto 2rem;
+      line-height: 1.75;
+      position: relative
+    }
+
+    .guide-section {
+      padding: 3rem 5% 6rem
+    }
+
+    .animal-tabs {
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+      margin-bottom: 2.5rem
+    }
+
+    .atab {
+      padding: .45rem 1.2rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      font-family: 'Jost', sans-serif;
+      font-size: .78rem;
+      cursor: none;
+      transition: all .2s;
+      letter-spacing: .06em
+    }
+
+    .atab.active,
+    .atab:hover {
+      background: var(--lime);
+      color: var(--black);
+      border-color: var(--lime)
+    }
+
+    /* Settings cards */
+    .settings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem
+    }
+
+    .sg-card {
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, .02);
+      overflow: hidden;
+      transition: border-color .3s
+    }
+
+    .sg-card:hover {
+      border-color: rgba(124, 179, 66, .3)
+    }
+
+    .sg-img {
+      height: 180px;
+      overflow: hidden;
+      position: relative
+    }
+
+    .sg-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .5s
+    }
+
+    .sg-card:hover .sg-img img {
+      transform: scale(1.05)
+    }
+
+    .sg-img-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, .7), transparent 55%)
+    }
+
+    .sg-img-label {
+      position: absolute;
+      bottom: .75rem;
+      left: .85rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      z-index: 1
+    }
+
+    .sg-body {
+      padding: 1.25rem
+    }
+
+    .settings-table {
+      width: 100%;
+      border-collapse: collapse
+    }
+
+    .settings-table tr {
+      border-bottom: 1px solid var(--border)
+    }
+
+    .settings-table tr:last-child {
+      border-bottom: none
+    }
+
+    .settings-table td {
+      padding: .6rem .5rem;
+      font-size: .8rem
+    }
+
+    .settings-table td:first-child {
+      color: var(--muted);
+      width: 45%
+    }
+
+    .settings-table td:last-child {
+      color: var(--lime);
+      font-weight: 500;
+      font-family: 'Playfair Display', serif;
+      font-size: .88rem
+    }
+
+    .sg-tip {
+      margin-top: .85rem;
+      padding: .65rem .85rem;
+      border-radius: 8px;
+      border-left: 3px solid var(--gold);
+      background: rgba(200, 169, 81, .06);
+      font-size: .78rem;
+      color: var(--muted);
+      line-height: 1.55
+    }
+
+    .sg-tip strong {
+      color: var(--gold)
+    }
+
+    .quick-ref {
+      padding: 0 5% 6rem
+    }
+
+    .qr-table-wrap {
+      overflow-x: auto;
+      margin-top: 2rem
+    }
+
+    .qr-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 600px
+    }
+
+    .qr-table th {
+      font-size: .7rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--lime);
+      padding: .75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-weight: 500;
+      background: rgba(124, 179, 66, .05)
+    }
+
+    .qr-table td {
+      padding: .8rem 1rem;
+      font-size: .82rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle
+    }
+
+    .qr-table tr:hover td {
+      background: rgba(255, 255, 255, .02)
+    }
+
+    .qr-animal {
+      display: flex;
+      align-items: center;
+      gap: .6rem
+    }
+
+    .qr-icon {
+      font-size: 1.2rem
+    }
+
+    .qr-val {
+      color: var(--lime);
+      font-family: 'Playfair Display', serif;
+      font-size: .9rem;
+      font-weight: 600
+    }
+
+    .qr-tip-cell {
+      color: var(--muted);
+      font-size: .76rem
+    }
+  </style>
+</head>
+
+<body>
+  <div class="cur" id="cur"></div>
+  <div class="cur-r" id="curR"></div>
+  <nav>
+    <a href="index.html" class="logo">Wild<span>Lens</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="courses.html">Courses</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="videos.html">Videos</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html" class="nav-cta">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="guide-hero">
+    <div class="section-label" style="justify-content:center">Camera Settings Reference</div>
+    <h1>Settings <em style="color:var(--gold);font-style:italic">Guide</em></h1>
+    <p>Har wildlife subject ke liye best camera settings — field mein quick reference ke liye bookmark karo!</p>
+  </div>
+
+  <section class="guide-section">
+    <div class="animal-tabs">
+      <button class="atab active">All Subjects</button>
+      <button class="atab">Tigers & Big Cats</button>
+      <button class="atab">Birds in Flight</button>
+      <button class="atab">Elephants</button>
+      <button class="atab">Low Light</button>
+      <button class="atab">Macro</button>
+    </div>
+
+    <div class="settings-grid">
+      <div class="sg-card fade-up">
+        <div class="sg-img">
+          <img src="https://images.unsplash.com/photo-1561731216-c3a4d99437d5?w=600&auto=format&fit=crop&q=80"
+            alt="Tiger" loading="lazy">
+          <div class="sg-img-overlay"></div>
+          <div class="sg-img-label">Bengal Tiger</div>
+        </div>
+        <div class="sg-body">
+          <table class="settings-table">
+            <tr>
+              <td>Shutter Speed</td>
+              <td>1/800s – 1/1600s</td>
+            </tr>
+            <tr>
+              <td>Aperture</td>
+              <td>f/4 – f/5.6</td>
+            </tr>
+            <tr>
+              <td>ISO</td>
+              <td>400 – 1600</td>
+            </tr>
+            <tr>
+              <td>Focus Mode</td>
+              <td>AI Servo / AF-C</td>
+            </tr>
+            <tr>
+              <td>Drive Mode</td>
+              <td>High Speed Burst</td>
+            </tr>
+            <tr>
+              <td>Metering</td>
+              <td>Evaluative</td>
+            </tr>
+            <tr>
+              <td>Focal Length</td>
+              <td>300mm – 600mm</td>
+            </tr>
+          </table>
+          <div class="sg-tip"><strong>Pro Tip:</strong> Tiger ki aankh pe focus rakho. Jungle mein dappled light hoti
+            hai — spot metering use karo agar background bahut bright ho.</div>
+        </div>
+      </div>
+
+      <div class="sg-card fade-up" style="transition-delay:.1s">
+        <div class="sg-img">
+          <img src="https://images.unsplash.com/photo-1549366021-9f761d040a94?w=600&auto=format&fit=crop&q=80"
+            alt="Eagle" loading="lazy">
+          <div class="sg-img-overlay"></div>
+          <div class="sg-img-label">Birds in Flight</div>
+        </div>
+        <div class="sg-body">
+          <table class="settings-table">
+            <tr>
+              <td>Shutter Speed</td>
+              <td>1/2000s – 1/4000s</td>
+            </tr>
+            <tr>
+              <td>Aperture</td>
+              <td>f/5.6 – f/8</td>
+            </tr>
+            <tr>
+              <td>ISO</td>
+              <td>Auto (800 max)</td>
+            </tr>
+            <tr>
+              <td>Focus Mode</td>
+              <td>AF-C + Zone AF</td>
+            </tr>
+            <tr>
+              <td>Drive Mode</td>
+              <td>Fastest Burst</td>
+            </tr>
+            <tr>
+              <td>Metering</td>
+              <td>Center-Weighted</td>
+            </tr>
+            <tr>
+              <td>Focal Length</td>
+              <td>400mm – 800mm</td>
+            </tr>
+          </table>
+          <div class="sg-tip"><strong>Pro Tip:</strong> Blue sky background pe birds shoot karo toh exposure -1 EV karo.
+            Raptor ki aankhein sharp rakhna sabse important hai.</div>
+        </div>
+      </div>
+
+      <div class="sg-card fade-up" style="transition-delay:.2s">
+        <div class="sg-img">
+          <img src="https://images.unsplash.com/photo-1516912481808-3406841bd33c?w=600&auto=format&fit=crop&q=80"
+            alt="Elephant" loading="lazy">
+          <div class="sg-img-overlay"></div>
+          <div class="sg-img-label">Elephants</div>
+        </div>
+        <div class="sg-body">
+          <table class="settings-table">
+            <tr>
+              <td>Shutter Speed</td>
+              <td>1/500s – 1/1000s</td>
+            </tr>
+            <tr>
+              <td>Aperture</td>
+              <td>f/5.6 – f/8</td>
+            </tr>
+            <tr>
+              <td>ISO</td>
+              <td>200 – 800</td>
+            </tr>
+            <tr>
+              <td>Focus Mode</td>
+              <td>Single AF / AF-C</td>
+            </tr>
+            <tr>
+              <td>Drive Mode</td>
+              <td>Single / Low Burst</td>
+            </tr>
+            <tr>
+              <td>Metering</td>
+              <td>Evaluative</td>
+            </tr>
+            <tr>
+              <td>Focal Length</td>
+              <td>100mm – 400mm</td>
+            </tr>
+          </table>
+          <div class="sg-tip"><strong>Pro Tip:</strong> Elephant ke texture aur wrinkles capture karne ke liye side
+            light best hai. Herd shot ke liye wide angle try karo.</div>
+        </div>
+      </div>
+
+      <div class="sg-card fade-up">
+        <div class="sg-img">
+          <img src="https://images.unsplash.com/photo-1500479694472-551d1fb6258d?w=600&auto=format&fit=crop&q=80"
+            alt="Low Light" loading="lazy">
+          <div class="sg-img-overlay"></div>
+          <div class="sg-img-label">Low Light / Dawn</div>
+        </div>
+        <div class="sg-body">
+          <table class="settings-table">
+            <tr>
+              <td>Shutter Speed</td>
+              <td>1/250s – 1/500s</td>
+            </tr>
+            <tr>
+              <td>Aperture</td>
+              <td>f/2.8 – f/4 (widest)</td>
+            </tr>
+            <tr>
+              <td>ISO</td>
+              <td>1600 – 6400</td>
+            </tr>
+            <tr>
+              <td>Focus Mode</td>
+              <td>AF-C + Eye AF</td>
+            </tr>
+            <tr>
+              <td>Drive Mode</td>
+              <td>High Burst</td>
+            </tr>
+            <tr>
+              <td>Metering</td>
+              <td>Spot Metering</td>
+            </tr>
+            <tr>
+              <td>White Balance</td>
+              <td>Cloudy / Manual</td>
+            </tr>
+          </table>
+          <div class="sg-tip"><strong>Pro Tip:</strong> RAW format mein shoot karo — low light noise Lightroom mein
+            easily fix hoti hai. High ISO se mat daro!</div>
+        </div>
+      </div>
+
+      <div class="sg-card fade-up" style="transition-delay:.1s">
+        <div class="sg-img">
+          <img src="https://images.unsplash.com/photo-1474511320723-9a56873867b5?w=600&auto=format&fit=crop&q=80"
+            alt="Fox" loading="lazy">
+          <div class="sg-img-overlay"></div>
+          <div class="sg-img-label">Small Mammals & Fox</div>
+        </div>
+        <div class="sg-body">
+          <table class="settings-table">
+            <tr>
+              <td>Shutter Speed</td>
+              <td>1/500s – 1/1000s</td>
+            </tr>
+            <tr>
+              <td>Aperture</td>
+              <td>f/4 – f/6.3</td>
+            </tr>
+            <tr>
+              <td>ISO</td>
+              <td>400 – 1200</td>
+            </tr>
+            <tr>
+              <td>Focus Mode</td>
+              <td>AI Servo + Small Zone</td>
+            </tr>
+            <tr>
+              <td>Drive Mode</td>
+              <td>High Speed Burst</td>
+            </tr>
+            <tr>
+              <td>Focal Length</td>
+              <td>200mm – 500mm</td>
+            </tr>
+            <tr>
+              <td>Position</td>
+              <td>Ground Level!</td>
+            </tr>
+          </table>
+          <div class="sg-tip"><strong>Pro Tip:</strong> Ground level pe lait jao — animal ki aankh ke level pe shoot
+            karo. Yeh perspective photo ko magical banata hai!</div>
+        </div>
+      </div>
+
+      <div class="sg-card fade-up" style="transition-delay:.2s">
+        <div class="sg-img">
+          <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&auto=format&fit=crop&q=80"
+            alt="Macro" loading="lazy">
+          <div class="sg-img-overlay"></div>
+          <div class="sg-img-label">Macro & Insects</div>
+        </div>
+        <div class="sg-body">
+          <table class="settings-table">
+            <tr>
+              <td>Shutter Speed</td>
+              <td>1/200s – 1/500s</td>
+            </tr>
+            <tr>
+              <td>Aperture</td>
+              <td>f/8 – f/16</td>
+            </tr>
+            <tr>
+              <td>ISO</td>
+              <td>200 – 800</td>
+            </tr>
+            <tr>
+              <td>Focus Mode</td>
+              <td>Manual / Single AF</td>
+            </tr>
+            <tr>
+              <td>Drive Mode</td>
+              <td>Single Shot</td>
+            </tr>
+            <tr>
+              <td>Lens</td>
+              <td>100mm Macro Lens</td>
+            </tr>
+            <tr>
+              <td>Extra</td>
+              <td>Ring Flash / Diffuser</td>
+            </tr>
+          </table>
+          <div class="sg-tip"><strong>Pro Tip:</strong> Macro mein depth of field bahut kam hoti hai — f/11-16 use karo
+            sharp results ke liye. Focus stacking try karo post-processing mein!</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="quick-ref">
+    <div class="section-head fade-up">
+      <div class="section-label">Quick Reference</div>
+      <h2 class="section-title">All Subjects at a <em>Glance</em></h2>
+    </div>
+    <div class="qr-table-wrap fade-up">
+      <table class="qr-table">
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>Shutter Speed</th>
+            <th>Aperture</th>
+            <th>ISO Range</th>
+            <th>Focal Length</th>
+            <th>Key Tip</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="qr-animal"><span class="qr-icon">🐅</span>Tiger (resting)</div>
+            </td>
+            <td class="qr-val">1/500s</td>
+            <td class="qr-val">f/5.6</td>
+            <td class="qr-val">400-800</td>
+            <td class="qr-val">400-600mm</td>
+            <td class="qr-tip-cell">Eye focus, wait for yawn!</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="qr-animal"><span class="qr-icon">🐅</span>Tiger (moving)</div>
+            </td>
+            <td class="qr-val">1/1600s</td>
+            <td class="qr-val">f/5.6</td>
+            <td class="qr-val">800-3200</td>
+            <td class="qr-val">400-600mm</td>
+            <td class="qr-tip-cell">Burst mode, track body</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="qr-animal"><span class="qr-icon">🦅</span>Eagle (perched)</div>
+            </td>
+            <td class="qr-val">1/500s</td>
+            <td class="qr-val">f/6.3</td>
+            <td class="qr-val">200-800</td>
+            <td class="qr-val">500-800mm</td>
+            <td class="qr-tip-cell">Wait for head turn</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="qr-animal"><span class="qr-icon">🦅</span>Eagle (flying)</div>
+            </td>
+            <td class="qr-val">1/3200s</td>
+            <td class="qr-val">f/6.3</td>
+            <td class="qr-val">400-1600</td>
+            <td class="qr-val">500-800mm</td>
+            <td class="qr-tip-cell">Zone AF, anticipate direction</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="qr-animal"><span class="qr-icon">🐘</span>Elephant</div>
+            </td>
+            <td class="qr-val">1/640s</td>
+            <td class="qr-val">f/7.1</td>
+            <td class="qr-val">200-800</td>
+            <td class="qr-val">100-400mm</td>
+            <td class="qr-tip-cell">Wide shot shows scale</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="qr-animal"><span class="qr-icon">🦁</span>Lion</div>
+            </td>
+            <td class="qr-val">1/640s</td>
+            <td class="qr-val">f/5.6</td>
+            <td class="qr-val">400-1600</td>
+            <td class="qr-val">300-600mm</td>
+            <td class="qr-tip-cell">Golden hour = best mane shot</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="qr-animal"><span class="qr-icon">🦋</span>Butterfly/Insect</div>
+            </td>
+            <td class="qr-val">1/320s</td>
+            <td class="qr-val">f/11</td>
+            <td class="qr-val">200-400</td>
+            <td class="qr-val">100mm Macro</td>
+            <td class="qr-tip-cell">Morning = slow insects</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="qr-animal"><span class="qr-icon">🌅</span>Sunrise Safari</div>
+            </td>
+            <td class="qr-val">1/250s</td>
+            <td class="qr-val">f/4</td>
+            <td class="qr-val">1600-6400</td>
+            <td class="qr-val">Any</td>
+            <td class="qr-tip-cell">RAW only, expose for sky</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="text-align:center;margin-top:2.5rem" class="fade-up">
+      <a href="courses.html" class="btn btn-primary">Learn More in Courses</a>
+      <a href="contact.html" class="btn btn-outline" style="margin-left:1rem">Ask a Question</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand"><a href="index.html" class="logo">Wild<span>Lens</span></a>
+        <p>Wildlife photography education worldwide.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Learn</h4>
+        <ul>
+          <li><a href="courses.html">Courses</a></li>
+          <li><a href="videos.html">Videos</a></li>
+          <li><a href="guide.html">Camera Guide</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="gallery.html">Gallery</a></li>
+          <li><a href="map.html">Wildlife Map</a></li>
+          <li><a href="quiz.html">Quiz</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="pricing.html">Pricing</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 WildLens Photography.</p>
+    </div>
+  </footer>
+  <script src="main.js"></script>
+  <script>
+    document.querySelectorAll('.atab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.atab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+      });
+    });
+  </script>
+</body>
+
+</html>

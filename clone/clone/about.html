@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Me — WildLens</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .about-hero {
+      padding: 8rem 5% 6rem;
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 5rem;
+      align-items: center;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .about-img-col {
+      position: relative
+    }
+
+    .about-img {
+      width: 100%;
+      height: 540px;
+      object-fit: cover;
+      border-radius: 20px;
+      display: block
+    }
+
+    .about-badge {
+      position: absolute;
+      bottom: -24px;
+      right: -24px;
+      background: var(--lime);
+      color: var(--black);
+      border-radius: 18px;
+      padding: 1.25rem 1.5rem;
+      text-align: center
+    }
+
+    .ab-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      font-weight: 900;
+      display: block;
+      line-height: 1
+    }
+
+    .ab-label {
+      font-size: .68rem;
+      font-weight: 600;
+      letter-spacing: .05em
+    }
+
+    .about-text h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.5rem, 5vw, 4.2rem);
+      font-weight: 900;
+      line-height: 1.0;
+      margin-bottom: 1.25rem
+    }
+
+    .about-text h1 em {
+      color: var(--gold);
+      font-style: italic
+    }
+
+    .about-text p {
+      font-size: .94rem;
+      color: var(--muted);
+      line-height: 1.82;
+      margin-bottom: 1rem
+    }
+
+    .tags {
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+      margin: 1.5rem 0
+    }
+
+    .atag {
+      font-size: .7rem;
+      padding: .3rem .85rem;
+      border-radius: 999px;
+      border: 1px solid rgba(124, 179, 66, .3);
+      color: var(--lime)
+    }
+
+    .journey {
+      padding: 7rem 5%;
+      background: var(--dark)
+    }
+
+    .timeline {
+      margin-top: 3rem;
+      padding-left: 2rem;
+      position: relative
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--lime), transparent)
+    }
+
+    .tl {
+      position: relative;
+      padding: 0 0 2.5rem 2rem
+    }
+
+    .tl-dot {
+      position: absolute;
+      left: -2.6rem;
+      top: 5px;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: var(--lime);
+      box-shadow: 0 0 14px rgba(124, 179, 66, .6)
+    }
+
+    .tl-year {
+      font-size: .7rem;
+      color: var(--lime);
+      letter-spacing: .12em;
+      display: block;
+      margin-bottom: .4rem
+    }
+
+    .tl-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: .4rem
+    }
+
+    .tl-desc {
+      font-size: .84rem;
+      color: var(--muted);
+      line-height: 1.7
+    }
+
+    .awards {
+      padding: 7rem 5%
+    }
+
+    .aw-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-top: 3rem
+    }
+
+    .aw-card {
+      border-radius: 16px;
+      padding: 1.75rem 1.25rem;
+      text-align: center;
+      background: rgba(255, 255, 255, .02);
+      border: 1px solid var(--border);
+      transition: border-color .3s
+    }
+
+    .aw-card:hover {
+      border-color: rgba(124, 179, 66, .3)
+    }
+
+    .aw-icon {
+      font-size: 2rem;
+      display: block;
+      margin-bottom: .85rem
+    }
+
+    .aw-title {
+      font-size: .88rem;
+      font-weight: 500;
+      margin-bottom: .4rem
+    }
+
+    .aw-org {
+      font-size: .74rem;
+      color: var(--muted)
+    }
+
+    .skills-s {
+      padding: 7rem 5%;
+      background: var(--dark)
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      margin-top: 3rem
+    }
+
+    .sk-row {
+      margin-bottom: 1.35rem
+    }
+
+    .sk-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: .82rem;
+      margin-bottom: 8px
+    }
+
+    .sk-label span:last-child {
+      color: var(--lime)
+    }
+
+    .sk-bar {
+      height: 3px;
+      background: rgba(255, 255, 255, .07);
+      border-radius: 2px
+    }
+
+    .sk-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: linear-gradient(to right, var(--lime), var(--gold));
+      width: 0;
+      transition: width 1.5s ease
+    }
+
+    @media(max-width:900px) {
+      .about-hero {
+        grid-template-columns: 1fr;
+        gap: 3rem
+      }
+
+      .about-img {
+        height: 360px
+      }
+
+      .about-badge {
+        right: 0
+      }
+
+      .aw-grid {
+        grid-template-columns: repeat(2, 1fr)
+      }
+
+      .skills-grid {
+        grid-template-columns: 1fr
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="cur" id="cur"></div>
+  <div class="cur-r" id="curR"></div>
+  <nav>
+    <a href="index.html" class="logo">Wild<span>Lens</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="courses.html">Courses</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="videos.html">Videos</a></li>
+      <li><a href="about.html" class="active">About</a></li>
+      <li><a href="contact.html" class="nav-cta">Contact</a></li>
+    </ul>
+  </nav>
+  <section class="about-hero">
+    <div class="about-img-col fade-up">
+      <img class="about-img"
+        src="https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=800&auto=format&fit=crop&q=85"
+        alt="Wildlife Photographer">
+      <div class="about-badge"><span class="ab-num">12+</span><span class="ab-label">Years in Wild</span></div>
+    </div>
+    <div class="about-text fade-up">
+      <div class="section-label">Your Instructor</div>
+      <h1>Hi, I'm <em>Ramesh sati</em>
+      </em></h1>
+      <p>National Geographic contributor and wildlife photographer with 12 years shooting in India's most iconic
+        national parks — from Ranthambore to Kaziranga, from the Himalayas to the Sundarbans mangroves.</p>
+      <p>What started as a childhood fascination with birds in my backyard in Delhi grew into a career that has taken me
+        from Bengal tiger reserves to African savannas. I've had my photos published in NatGeo, BBC Wildlife, and
+        Sanctuary Asia.</p>
+      <p>I started WildLens because I believe that great wildlife photography is a skill anyone can learn — and I want
+        to share everything I know with you.</p>
+      <div class="tags">
+        <span class="atag">Tiger Photography</span><span class="atag">Bird Specialist</span>
+        <span class="atag">Lightroom Expert</span><span class="atag">Safari Guide</span><span class="atag">NatGeo
+          Contributor</span>
+      </div>
+      <a href="contact.html" class="btn btn-primary">Work With Me</a>
+    </div>
+  </section>
+  <section class="journey">
+    <div class="section-head fade-up">
+      <div class="section-label">My Story</div>
+      <h2 class="section-title">The <em>Journey</em></h2>
+    </div>
+    <div class="timeline fade-up">
+      <div class="tl">
+        <div class="tl-dot"></div><span class="tl-year">2013</span>
+        <div class="tl-title">First Camera, First Forest</div>
+        <p class="tl-desc">Bought my first DSLR with college savings. Drove to Jim Corbett alone, came back with 800
+          blurry photos — and a complete obsession with wildlife photography.</p>
+      </div>
+      <div class="tl">
+        <div class="tl-dot"></div><span class="tl-year">2015</span>
+        <div class="tl-title">First Publication — Cover of Wildlife of India</div>
+        <p class="tl-desc">My photo of a Bengal Tiger at dawn was selected for the cover of Wildlife of India magazine.
+          That moment confirmed this was my path.</p>
+      </div>
+      <div class="tl">
+        <div class="tl-dot"></div><span class="tl-year">2017</span>
+        <div class="tl-title">NatGeo Contributor & Africa Safari</div>
+        <p class="tl-desc">Became a contributing photographer for National Geographic India. Led my first photography
+          safari across Masai Mara capturing the Great Migration.</p>
+      </div>
+      <div class="tl">
+        <div class="tl-dot"></div><span class="tl-year">2019</span>
+        <div class="tl-title">Launched WildLens</div>
+        <p class="tl-desc">Started WildLens as a YouTube channel. Within 6 months, 10,000 subscribers. Built proper
+          structured courses based on student demand.</p>
+      </div>
+      <div class="tl">
+        <div class="tl-dot"></div><span class="tl-year">2025</span>
+        <div class="tl-title">2,400+ Students, 30+ Countries</div>
+        <p class="tl-desc">WildLens now has students across India, UK, Australia, USA and beyond. One of India's top
+          wildlife photography education platforms.</p>
+      </div>
+    </div>
+  </section>
+  <section class="awards">
+    <div class="section-head fade-up">
+      <div class="section-label">Recognition</div>
+      <h2 class="section-title">Awards & <em>Features</em></h2>
+    </div>
+    <div class="aw-grid">
+      <div class="aw-card fade-up"><span class="aw-icon">🏆</span>
+        <div class="aw-title">Wildlife Photographer of the Year</div>
+        <div class="aw-org">BBC, 2022 — Finalist</div>
+      </div>
+      <div class="aw-card fade-up" style="transition-delay:.1s"><span class="aw-icon">📰</span>
+        <div class="aw-title">NatGeo Contributor</div>
+        <div class="aw-org">National Geographic India</div>
+      </div>
+      <div class="aw-card fade-up" style="transition-delay:.2s"><span class="aw-icon">🎖️</span>
+        <div class="aw-title">Best Wildlife Blog</div>
+        <div class="aw-org">India Photography Awards 2023</div>
+      </div>
+      <div class="aw-card fade-up" style="transition-delay:.3s"><span class="aw-icon">🎓</span>
+        <div class="aw-title">Top Educator</div>
+        <div class="aw-org">Wildlife Trust of India 2024</div>
+      </div>
+    </div>
+  </section>
+  <section class="skills-s">
+    <div class="section-head fade-up">
+      <div class="section-label">Expertise</div>
+      <h2 class="section-title">Skills & <em>Specialties</em></h2>
+    </div>
+    <div class="skills-grid fade-up" id="skills-wrap">
+      <div>
+        <div class="sk-row">
+          <div class="sk-label"><span>Bird Photography</span><span>98%</span></div>
+          <div class="sk-bar">
+            <div class="sk-fill" data-w="98"></div>
+          </div>
+        </div>
+        <div class="sk-row">
+          <div class="sk-label"><span>Tiger & Big Cats</span><span>95%</span></div>
+          <div class="sk-bar">
+            <div class="sk-fill" data-w="95"></div>
+          </div>
+        </div>
+        <div class="sk-row">
+          <div class="sk-label"><span>Landscape Photography</span><span>88%</span></div>
+          <div class="sk-bar">
+            <div class="sk-fill" data-w="88"></div>
+          </div>
+        </div>
+        <div class="sk-row">
+          <div class="sk-label"><span>Low Light / Night</span><span>82%</span></div>
+          <div class="sk-bar">
+            <div class="sk-fill" data-w="82"></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="sk-row">
+          <div class="sk-label"><span>Lightroom Editing</span><span>97%</span></div>
+          <div class="sk-bar">
+            <div class="sk-fill" data-w="97"></div>
+          </div>
+        </div>
+        <div class="sk-row">
+          <div class="sk-label"><span>Photoshop</span><span>78%</span></div>
+          <div class="sk-bar">
+            <div class="sk-fill" data-w="78"></div>
+          </div>
+        </div>
+        <div class="sk-row">
+          <div class="sk-label"><span>Video Production</span><span>85%</span></div>
+          <div class="sk-bar">
+            <div class="sk-fill" data-w="85"></div>
+          </div>
+        </div>
+        <div class="sk-row">
+          <div class="sk-label"><span>Teaching & Mentoring</span><span>96%</span></div>
+          <div class="sk-bar">
+            <div class="sk-fill" data-w="96"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand"><a href="index.html" class="logo">Wild<span>Lens</span></a>
+        <p>Wildlife photography education for aspiring naturalists worldwide.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Learn</h4>
+        <ul>
+          <li><a href="courses.html">Courses</a></li>
+          <li><a href="videos.html">Videos</a></li>
+          <li><a href="blog.html">Blog</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="gallery.html">Gallery</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Follow</h4>
+        <ul>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">YouTube</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 WildLens Photography.</p>
+    </div>
+  </footer>
+  <script src="main.js"></script>
+  <script>
+    const so = new IntersectionObserver(e => { e.forEach(en => { if (en.isIntersecting) { document.querySelectorAll('.sk-fill').forEach(f => f.style.width = f.dataset.w + '%'); so.disconnect(); } }); }, { threshold: .3 });
+    so.observe(document.getElementById('skills-wrap'));
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — WildLens</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="enhancements.js">
+  <link rel="stylesheet" href="main.js">
+  <style>
+    .contact-wrap {
+      padding: 8rem 5% 7rem;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 5rem;
+      min-height: 90vh
+    }
+
+    .contact-info h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 6vw, 4.5rem);
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 1.1rem
+    }
+
+    .contact-info h1 em {
+      color: var(--gold);
+      font-style: italic
+    }
+
+    .contact-info .lead {
+      font-size: .95rem;
+      color: var(--muted);
+      line-height: 1.82;
+      margin-bottom: 2.5rem
+    }
+
+    .c-cards {
+      display: flex;
+      flex-direction: column;
+      gap: .9rem;
+      margin-bottom: 2.5rem
+    }
+
+    .c-card {
+      display: flex;
+      gap: 1rem;
+      padding: 1.1rem 1.25rem;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, .02);
+      align-items: flex-start;
+      transition: border-color .3s
+    }
+
+    .c-card:hover {
+      border-color: rgba(124, 179, 66, .3)
+    }
+
+    .c-icon {
+      font-size: 1.4rem;
+      flex-shrink: 0;
+      margin-top: 2px
+    }
+
+    .c-card h4 {
+      font-size: .82rem;
+      font-weight: 500;
+      margin-bottom: 3px
+    }
+
+    .c-card p,
+    .c-card a {
+      font-size: .82rem;
+      color: var(--muted);
+      display: block;
+      line-height: 1.5
+    }
+
+    .c-card a {
+      color: var(--lime);
+      text-decoration: none
+    }
+
+    .social-row {
+      display: flex;
+      gap: .65rem
+    }
+
+    .sb {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, .02);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      text-decoration: none;
+      transition: all .25s
+    }
+
+    .sb:hover {
+      border-color: var(--lime);
+      background: rgba(124, 179, 66, .1)
+    }
+
+    .contact-form-box {
+      background: rgba(22, 51, 32, .25);
+      border: 1px solid rgba(124, 179, 66, .15);
+      border-radius: 22px;
+      padding: 2.75rem
+    }
+
+    .contact-form-box h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      font-weight: 700;
+      margin-bottom: .4rem
+    }
+
+    .form-sub {
+      font-size: .84rem;
+      color: var(--muted);
+      margin-bottom: 2rem
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem
+    }
+
+    .fg {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 1rem
+    }
+
+    .fg label {
+      font-size: .74rem;
+      font-weight: 500;
+      color: var(--muted);
+      letter-spacing: .04em;
+      text-transform: uppercase
+    }
+
+    .fg input,
+    .fg select,
+    .fg textarea {
+      background: rgba(255, 255, 255, .04);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: .78rem 1rem;
+      color: var(--text);
+      font-family: 'Jost', sans-serif;
+      font-size: .88rem;
+      outline: none;
+      transition: border-color .2s;
+      width: 100%
+    }
+
+    .fg input:focus,
+    .fg select:focus,
+    .fg textarea:focus {
+      border-color: rgba(124, 179, 66, .5)
+    }
+
+    .fg select option {
+      background: var(--dark)
+    }
+
+    .fg textarea {
+      min-height: 130px;
+      resize: vertical
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 1rem;
+      background: var(--lime);
+      color: var(--black);
+      border: none;
+      border-radius: 999px;
+      font-family: 'Jost', sans-serif;
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: none;
+      transition: all .3s;
+      margin-top: .5rem;
+      letter-spacing: .06em;
+      text-transform: uppercase
+    }
+
+    .submit-btn:hover {
+      background: var(--gold);
+      transform: translateY(-2px)
+    }
+
+    .form-note {
+      font-size: .73rem;
+      color: var(--muted);
+      text-align: center;
+      margin-top: .75rem
+    }
+
+    .success {
+      display: none;
+      text-align: center;
+      padding: 2.5rem 1rem
+    }
+
+    .success-icon {
+      font-size: 3.5rem;
+      display: block;
+      margin-bottom: 1rem
+    }
+
+    .success h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--lime);
+      margin-bottom: .5rem
+    }
+
+    .success p {
+      font-size: .88rem;
+      color: var(--muted)
+    }
+
+    .faq-s {
+      padding: 6rem 5%;
+      background: var(--dark)
+    }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-top: 3rem
+    }
+
+    .faq-card {
+      padding: 1.5rem;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, .02);
+      transition: border-color .3s
+    }
+
+    .faq-card:hover {
+      border-color: rgba(124, 179, 66, .25)
+    }
+
+    .fq {
+      font-size: .9rem;
+      font-weight: 500;
+      margin-bottom: .6rem
+    }
+
+    .fa {
+      font-size: .82rem;
+      color: var(--muted);
+      line-height: 1.65
+    }
+
+    @media(max-width:900px) {
+      .contact-wrap {
+        grid-template-columns: 1fr;
+        gap: 3rem
+      }
+
+      .form-row {
+        grid-template-columns: 1fr
+      }
+
+      .faq-grid {
+        grid-template-columns: 1fr
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="cur" id="cur"></div>
+  <div class="cur-r" id="curR"></div>
+  <nav>
+    <a href="index.html" class="logo">Wild<span>Lens</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="courses.html">Courses</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="videos.html">Videos</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html" class="nav-cta active">Contact</a></li>
+    </ul>
+  </nav>
+  <div class="contact-wrap">
+    <div class="contact-info fade-up">
+      <div class="section-label">Say Hello</div>
+      <h1>Get in <em>Touch</em></h1>
+      <p class="lead">Whether you have questions about a course, want to collaborate on a project, or just want to talk
+        wildlife photography — I'd love to hear from you. I personally reply to every message.</p>
+      <div class="c-cards">
+        <div class="c-card"><span class="c-icon">📧</span>
+          <div>
+            <h4>Email</h4><a href="mailto:rati082@gmail.com">rati082@gmail.com</a>
+            <p>I reply within 24 hours</p>
+          </div>
+        </div>
+        <div class="c-card"><span class="c-icon">📱</span>
+          <div>
+            <h4>WhatsApp</h4><a href="#">+91 7983</a>
+            <p>Mon–Sat, 9am–7pm IST</p>
+          </div>
+        </div>
+        <div class="c-card"><span class="c-icon">📍</span>
+          <div>
+            <h4>Based in</h4>
+            <p>New Delhi, India</p>
+            <p>Workshops available pan-India</p>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:.78rem;color:var(--muted);margin-bottom:.75rem;letter-spacing:.06em;text-transform:uppercase">
+        Follow My Work</p>
+      <div class="social-row">
+        <a href="#" class="sb">📸</a><a href="#" class="sb">▶️</a><a href="#" class="sb">💬</a><a href="#"
+          class="sb">🐦</a>
+      </div>
+    </div>
+    <div class="contact-form-box fade-up">
+      <div id="form-wrap">
+        <h2>Send a Message</h2>
+        <p class="form-sub">Fill in your details — I'll get back within 24 hours.</p>
+        <div class="form-row">
+          <div class="fg"><label>First Name *</label><input type="text" placeholder="Arjun"></div>
+          <div class="fg"><label>Last Name</label><input type="text" placeholder="Mehta"></div>
+        </div>
+        <div class="fg"><label>Email *</label><input type="email" placeholder="arjun@email.com"></div>
+        <div class="fg"><label>Phone</label><input type="tel" placeholder="+91 98765 00000"></div>
+        <div class="fg"><label>Topic *</label>
+          <select>
+            <option>Select a topic...</option>
+            <option>Course Enquiry</option>
+            <option>Photography Workshop</option>
+            <option>Safari Trip</option>
+            <option>Photo Review / Feedback</option>
+            <option>Collaboration</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="fg"><label>Message *</label><textarea placeholder="Tell me what's on your mind..."></textarea></div>
+        <button class="submit-btn" onclick="submitForm()">Send Message →</button>
+        <p class="form-note">🔒 Your info is private and never shared.</p>
+      </div>
+      <div class="success" id="success">
+        <span class="success-icon">✅</span>
+        <h3>Message Sent!</h3>
+        <p>Thank you for reaching out! I'll reply to your message within 24 hours. Looking forward to connecting.</p>
+        <a href="index.html" class="btn btn-outline" style="margin-top:1.5rem;display:inline-block">Back to Home</a>
+      </div>
+    </div>
+  </div>
+  <section class="faq-s">
+    <div class="section-head fade-up">
+      <div class="section-label">Common Questions</div>
+      <h2 class="section-title">FAQ</h2>
+    </div>
+    <div class="faq-grid">
+      <div class="faq-card fade-up">
+        <div class="fq">Do I need expensive gear?</div>
+        <div class="fa">Not at all. The beginner course works with any DSLR or mirrorless camera. Even an entry-level
+          body is perfectly fine when you learn how to use it properly.</div>
+      </div>
+      <div class="faq-card fade-up">
+        <div class="fq">How are the courses delivered?</div>
+        <div class="fa">All courses are video-based and on-demand. Watch at your own pace, pause, rewatch, and complete
+          assignments whenever it suits you — lifetime access included.</div>
+      </div>
+      <div class="faq-card fade-up">
+        <div class="fq">Do you offer refunds?</div>
+        <div class="fa">Yes. If you're not satisfied within 7 days of purchase, I'll give you a full refund, no
+          questions asked.</div>
+      </div>
+      <div class="faq-card fade-up">
+        <div class="fq">Do you run in-person workshops?</div>
+        <div class="fa">Yes — I run photography workshops and safaris 2-3 times a year across India. Contact me to get
+          on the notification list.</div>
+      </div>
+      <div class="faq-card fade-up">
+        <div class="fq">Can I get personal photo feedback?</div>
+        <div class="fa">Course students can submit photos for critique in the community. For 1-on-1 mentoring, contact
+          me directly to schedule a session.</div>
+      </div>
+      <div class="faq-card fade-up">
+        <div class="fq">Are courses available in Hindi?</div>
+        <div class="fa">Currently in English, but I publish some Hindi content on YouTube. A Hindi course version is
+          planned for late 2025!</div>
+      </div>
+    </div>
+  </section>
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand"><a href="index.html" class="logo">Wild<span>Lens</span></a>
+        <p>Wildlife photography education for aspiring naturalists worldwide.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Learn</h4>
+        <ul>
+          <li><a href="courses.html">Courses</a></li>
+          <li><a href="videos.html">Videos</a></li>
+          <li><a href="blog.html">Blog</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="gallery.html">Gallery</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Follow</h4>
+        <ul>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">YouTube</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 WildLens Photography.</p>
+    </div>
+  </footer>
+  <script src="main.js"></script>
+  <script>function submitForm() { document.getElementById('form-wrap').style.display = 'none'; document.getElementById('success').style.display = 'block'; }</script>
+</body>
+
+</html>

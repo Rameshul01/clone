@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WildLens — Wildlife Photography</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="enhancements.css">
+  <link rel="stylesheet" href="main.js">
+  <style>
+    .hero {
+      height: 100vh;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1612404730960-5c71577fca11?w=1800&auto=format&fit=crop&q=85');
+      background-size: cover;
+      background-position: center 30%;
+      transform: scale(1.05);
+      transition: transform 8s ease;
+      animation: slowZoom 12s ease-out forwards
+    }
+
+    @keyframes slowZoom {
+      from {
+        transform: scale(1.1)
+      }
+
+      to {
+        transform: scale(1)
+      }
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(8, 12, 9, .95) 0%, rgba(8, 12, 9, .4) 45%, rgba(8, 12, 9, .15) 100%)
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 0 5% 5rem;
+      width: 100%
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .68rem;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: var(--lime);
+      border: 1px solid rgba(124, 179, 66, .35);
+      padding: .35rem 1rem;
+      border-radius: 999px;
+      margin-bottom: 2rem;
+      animation: fadeUp .8s ease both
+    }
+
+    .hero-tag::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--lime);
+      display: block
+    }
+
+    h1.hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(4rem, 9vw, 8rem);
+      font-weight: 900;
+      line-height: .9;
+      margin-bottom: 1.5rem;
+      animation: fadeUp .8s .15s ease both
+    }
+
+    h1.hero-title .line2 {
+      color: var(--gold);
+      font-style: italic;
+      display: block
+    }
+
+    .hero-sub {
+      font-size: 1.1rem;
+      color: rgba(234, 230, 220, .7);
+      max-width: 480px;
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+      animation: fadeUp .8s .3s ease both;
+      font-weight: 300
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      animation: fadeUp .8s .45s ease both
+    }
+
+    .hero-scroll {
+      position: absolute;
+      right: 5%;
+      bottom: 5rem;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .75rem;
+      font-size: .65rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      animation: fadeUp 1s .8s ease both
+    }
+
+    .hero-scroll-line {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, var(--lime), transparent)
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(25px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    .stats-bar {
+      background: var(--moss);
+      padding: 1.75rem 5%;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-bottom: 1px solid rgba(124, 179, 66, .15)
+    }
+
+    .stat {
+      text-align: center;
+      padding: .5rem
+    }
+
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--lime);
+      display: block;
+      line-height: 1
+    }
+
+    .stat-label {
+      font-size: .72rem;
+      color: rgba(234, 230, 220, .55);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-top: 4px
+    }
+
+    .editorial {
+      padding: 7rem 5%
+    }
+
+    .editorial-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 1.5rem;
+      align-items: stretch
+    }
+
+    .ed-main {
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+      height: 600px
+    }
+
+    .ed-main img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .7s ease
+    }
+
+    .ed-main:hover img {
+      transform: scale(1.04)
+    }
+
+    .ed-main-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, .8) 0%, transparent 55%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 2rem
+    }
+
+    .ed-side {
+      display: grid;
+      grid-template-rows: 1fr 1fr;
+      gap: 1.5rem
+    }
+
+    .ed-card {
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+      cursor: none
+    }
+
+    .ed-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .6s ease;
+      display: block;
+      min-height: 200px
+    }
+
+    .ed-card:hover img {
+      transform: scale(1.05)
+    }
+
+    .ed-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, .75) 0%, transparent 55%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 1.25rem
+    }
+
+    .photo-cat {
+      font-size: .62rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--lime);
+      margin-bottom: 4px
+    }
+
+    .photo-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 700
+    }
+
+    .photo-title-lg {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: .4rem
+    }
+
+    .about-strip {
+      padding: 7rem 5%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+      background: var(--dark)
+    }
+
+    .about-img-wrap {
+      position: relative
+    }
+
+    .about-img {
+      width: 100%;
+      height: 520px;
+      object-fit: cover;
+      border-radius: 20px
+    }
+
+    .about-img-badge {
+      position: absolute;
+      bottom: -20px;
+      right: -20px;
+      background: var(--lime);
+      color: var(--black);
+      border-radius: 16px;
+      padding: 1.25rem 1.5rem;
+      text-align: center
+    }
+
+    .about-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      font-weight: 900;
+      display: block;
+      line-height: 1
+    }
+
+    .about-num-label {
+      font-size: .68rem;
+      font-weight: 600;
+      letter-spacing: .06em
+    }
+
+    .about-text .section-title {
+      margin-bottom: 1.25rem
+    }
+
+    .about-text p {
+      font-size: .95rem;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 1.25rem
+    }
+
+    .about-highlights {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin: 1.75rem 0
+    }
+
+    .highlight {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-size: .82rem;
+      color: var(--text)
+    }
+
+    .highlight::before {
+      content: '✓';
+      color: var(--lime);
+      font-weight: 700
+    }
+
+    .courses-preview {
+      padding: 7rem 5%
+    }
+
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 3rem
+    }
+
+    .course-card {
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, .02);
+      transition: transform .3s, border-color .3s;
+      cursor: none
+    }
+
+    .course-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(124, 179, 66, .3)
+    }
+
+    .course-thumb {
+      height: 200px;
+      position: relative;
+      overflow: hidden
+    }
+
+    .course-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .6s
+    }
+
+    .course-card:hover .course-thumb img {
+      transform: scale(1.07)
+    }
+
+    .course-thumb-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, .6), transparent 60%)
+    }
+
+    .course-level {
+      position: absolute;
+      top: .75rem;
+      left: .75rem;
+      font-size: .62rem;
+      padding: .25rem .7rem;
+      border-radius: 999px;
+      font-weight: 500;
+      letter-spacing: .06em
+    }
+
+    .level-bg {
+      background: rgba(124, 179, 66, .2);
+      color: var(--lime);
+      border: 1px solid rgba(124, 179, 66, .35)
+    }
+
+    .level-int {
+      background: rgba(200, 169, 81, .2);
+      color: var(--gold);
+      border: 1px solid rgba(200, 169, 81, .35)
+    }
+
+    .level-adv {
+      background: rgba(220, 80, 80, .2);
+      color: #f87171;
+      border: 1px solid rgba(220, 80, 80, .3)
+    }
+
+    .course-body {
+      padding: 1.4rem
+    }
+
+    .course-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: .5rem;
+      line-height: 1.3
+    }
+
+    .course-meta {
+      font-size: .75rem;
+      color: var(--muted);
+      display: flex;
+      gap: .75rem;
+      margin-bottom: 1rem
+    }
+
+    .course-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--lime)
+    }
+
+    .course-price .free {
+      color: var(--gold)
+    }
+
+    .gallery-preview {
+      padding: 7rem 5%;
+      background: var(--dark)
+    }
+
+    .gallery-masonry {
+      columns: 4;
+      column-gap: 1rem;
+      margin-top: 3rem
+    }
+
+    .gallery-item {
+      break-inside: avoid;
+      margin-bottom: 1rem;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      cursor: none
+    }
+
+    .gallery-item img {
+      width: 100%;
+      display: block;
+      transition: transform .5s ease
+    }
+
+    .gallery-item:hover img {
+      transform: scale(1.05)
+    }
+
+    .gallery-item-info {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, .8) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity .35s;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 1rem
+    }
+
+    .gallery-item:hover .gallery-item-info {
+      opacity: 1
+    }
+
+    .g-cat {
+      font-size: .6rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--lime);
+      margin-bottom: 3px
+    }
+
+    .g-name {
+      font-size: .85rem;
+      font-weight: 500
+    }
+
+    .testi-section {
+      padding: 7rem 5%
+    }
+
+    .testi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 3rem
+    }
+
+    .testi-card {
+      padding: 2rem;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, .025);
+      border: 1px solid var(--border);
+      position: relative
+    }
+
+    .testi-card::before {
+      content: '"';
+      font-family: 'Playfair Display', serif;
+      font-size: 5rem;
+      color: rgba(124, 179, 66, .15);
+      position: absolute;
+      top: 1rem;
+      right: 1.5rem;
+      line-height: 1
+    }
+
+    .testi-stars {
+      color: var(--gold);
+      font-size: .85rem;
+      letter-spacing: 2px;
+      margin-bottom: 1rem
+    }
+
+    .testi-text {
+      font-size: .9rem;
+      line-height: 1.75;
+      color: var(--muted);
+      font-style: italic;
+      margin-bottom: 1.5rem
+    }
+
+    .testi-author {
+      font-size: .82rem;
+      font-weight: 500;
+      color: var(--lime)
+    }
+
+    .testi-role {
+      font-size: .72rem;
+      color: var(--muted)
+    }
+
+    .cta-full {
+      height: 60vh;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center
+    }
+
+    .cta-full-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1564760055775-d63b17a55c44?w=1600&auto=format&fit=crop&q=80');
+      background-size: cover;
+      background-position: center
+    }
+
+    .cta-full-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(8, 12, 9, .75)
+    }
+
+    .cta-full-content {
+      position: relative;
+      z-index: 2;
+      max-width: 600px;
+      padding: 2rem
+    }
+
+    .cta-full-content h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      font-weight: 900;
+      margin-bottom: 1rem
+    }
+
+    .cta-full-content p {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.7;
+      margin-bottom: 2rem
+    }
+
+    .cta-btns {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap
+    }
+
+    @media(max-width:900px) {
+      .editorial-grid {
+        grid-template-columns: 1fr
+      }
+
+      .ed-side {
+        grid-template-rows: auto;
+        grid-template-columns: 1fr 1fr
+      }
+
+      .about-strip {
+        grid-template-columns: 1fr;
+        gap: 3rem
+      }
+
+      .about-img {
+        height: 350px
+      }
+
+      .courses-grid {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .gallery-masonry {
+        columns: 2
+      }
+
+      .testi-grid {
+        grid-template-columns: 1fr
+      }
+
+      .stats-bar {
+        grid-template-columns: repeat(2, 1fr)
+      }
+    }
+
+    @media(max-width:600px) {
+      .courses-grid {
+        grid-template-columns: 1fr
+      }
+
+      h1.hero-title {
+        font-size: 3.5rem
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="cur" id="cur"></div>
+  <div class="cur-r" id="curR"></div>
+
+  <nav>
+    <a href="index.html" class="logo">Wild<span>Lens</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="courses.html">Courses</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="videos.html">Videos</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html" class="nav-cta">Contact</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-scroll">
+      <div class="hero-scroll-line"></div><span>Scroll</span>
+    </div>
+    <div class="hero-content">
+      <div class="hero-tag">Wildlife Photography Masterclass</div>
+      <h1 class="hero-title">Capture<br><span class="line2">The Wild</span></h1>
+      <p class="hero-sub">Learn professional wildlife photography — from camera basics to real safari shooting, taught
+        by a National Geographic contributor with 12 years in the field.</p>
+      <div class="hero-btns">
+        <a href="courses.html" class="btn btn-primary">Browse Courses</a>
+        <a href="gallery.html" class="btn btn-outline">View Gallery</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="stats-bar">
+    <div class="stat"><span class="stat-num" data-target="2400">0+</span><span class="stat-label">Students
+        Trained</span></div>
+    <div class="stat"><span class="stat-num" data-target="150">0+</span><span class="stat-label">Video Lessons</span>
+    </div>
+    <div class="stat"><span class="stat-num" data-target="12">0+</span><span class="stat-label">Years Experience</span>
+    </div>
+    <div class="stat"><span class="stat-num" data-target="49">0</span><span class="stat-label">Rating ★</span></div>
+  </div>
+
+  <section class="editorial">
+    <div class="section-head fade-up">
+      <div class="section-label">Latest Captures</div>
+      <h2 class="section-title">Through the <em>Lens</em></h2>
+    </div>
+    <div class="editorial-grid fade-up">
+      <div class="ed-main">
+        <img src="https://images.unsplash.com/photo-1561731216-c3a4d99437d5?w=900&auto=format&fit=crop&q=85"
+          alt="Bengal Tiger" loading="lazy">
+        <div class="ed-main-overlay">
+          <span class="photo-cat">Animals</span>
+          <div class="photo-title-lg">Bengal Tiger — Bandhavgarh</div>
+          <p style="font-size:.82rem;color:var(--muted);margin-top:.3rem">Shot at golden hour, 400mm f/5.6</p>
+        </div>
+      </div>
+      <div class="ed-side">
+        <div class="ed-card">
+          <img src="https://images.unsplash.com/photo-1549366021-9f761d040a94?w=700&auto=format&fit=crop&q=80"
+            alt="Eagle" loading="lazy" style="height:280px">
+          <div class="ed-card-overlay">
+            <span class="photo-cat">Birds</span>
+            <div class="photo-title">Eagle in Flight</div>
+          </div>
+        </div>
+        <div class="ed-card">
+          <img src="https://images.unsplash.com/photo-1504173010664-32509107de0c?w=700&auto=format&fit=crop&q=80"
+            alt="Forest" loading="lazy" style="height:280px">
+          <div class="ed-card-overlay">
+            <span class="photo-cat">Nature</span>
+            <div class="photo-title">Misty Forest at Dawn</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about-strip">
+    <div class="about-img-wrap fade-up">
+      <img class="about-img"
+        src="https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=800&auto=format&fit=crop&q=85"
+        alt="Photographer in field" loading="lazy">
+      <div class="about-img-badge"><span class="about-num">12+</span><span class="about-num-label">Years in Wild</span>
+      </div>
+    </div>
+    <div class="about-text fade-up">
+      <div class="section-label">Your Instructor</div>
+      <h2 class="section-title">Hi, I'm <em>Aryan Singh</em></h2>
+      <p>National Geographic contributor and wildlife photographer with 12 years shooting in India's most iconic
+        national parks — from Ranthambore to Kaziranga, from the Himalayas to the mangroves of Sundarbans.</p>
+      <p>I started WildLens because I believe great wildlife photography is a skill anyone can learn. Every technique I
+        teach comes directly from real field experience.</p>
+      <div class="about-highlights">
+        <span class="highlight">NatGeo Contributor</span>
+        <span class="highlight">12+ Years Experience</span>
+        <span class="highlight">2,400+ Students</span>
+        <span class="highlight">BBC Award Finalist</span>
+      </div>
+      <a href="about.html" class="btn btn-outline">My Full Story</a>
+    </div>
+  </section>
+
+  <section class="courses-preview">
+    <div class="section-head fade-up">
+      <div class="section-label">Learn Photography</div>
+      <h2 class="section-title">Featured <em>Courses</em></h2>
+    </div>
+    <div class="courses-grid">
+      <div class="course-card fade-up">
+        <div class="course-thumb">
+          <img src="https://images.unsplash.com/photo-1510771463146-e89e6e86560e?w=600&auto=format&fit=crop&q=80"
+            alt="Camera basics" loading="lazy">
+          <div class="course-thumb-overlay"></div>
+          <span class="course-level level-bg">Beginner</span>
+        </div>
+        <div class="course-body">
+          <div class="course-title">Camera Basics for Wildlife</div>
+          <div class="course-meta"><span>📚 8 Lessons</span><span>⏱ 3.5 hrs</span><span>⭐ 4.9</span></div>
+          <span class="course-price"><span class="free">FREE</span></span>
+        </div>
+      </div>
+      <div class="course-card fade-up" style="transition-delay:.1s">
+        <div class="course-thumb">
+          <img src="https://images.unsplash.com/photo-1561731216-c3a4d99437d5?w=600&auto=format&fit=crop&q=80"
+            alt="Wildlife shooting" loading="lazy">
+          <div class="course-thumb-overlay"></div>
+          <span class="course-level level-int">Intermediate</span>
+        </div>
+        <div class="course-body">
+          <div class="course-title">Wildlife Shooting Techniques</div>
+          <div class="course-meta"><span>📚 10 Lessons</span><span>⏱ 5 hrs</span><span>⭐ 4.9</span></div>
+          <span class="course-price">₹1,999</span>
+        </div>
+      </div>
+      <div class="course-card fade-up" style="transition-delay:.2s">
+        <div class="course-thumb">
+          <img src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=600&auto=format&fit=crop&q=80"
+            alt="Editing" loading="lazy">
+          <div class="course-thumb-overlay"></div>
+          <span class="course-level level-adv">Advanced</span>
+        </div>
+        <div class="course-body">
+          <div class="course-title">Lightroom Editing for Wildlife Pros</div>
+          <div class="course-meta"><span>📚 10 Lessons</span><span>⏱ 6 hrs</span><span>⭐ 4.9</span></div>
+          <span class="course-price">₹2,499</span>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:2.5rem" class="fade-up">
+      <a href="courses.html" class="btn btn-outline">View All Courses</a>
+    </div>
+  </section>
+
+  <section class="gallery-preview">
+    <div class="section-head fade-up">
+      <div class="section-label">Photo Gallery</div>
+      <h2 class="section-title">Wild <em>Moments</em></h2>
+    </div>
+    <div class="gallery-masonry fade-up">
+      <div class="gallery-item"><img
+          src="https://images.unsplash.com/photo-1474511320723-9a56873867b5?w=500&auto=format&fit=crop&q=80" alt="Fox"
+          loading="lazy">
+        <div class="gallery-item-info"><span class="g-cat">Animals</span><span class="g-name">Red Fox</span></div>
+      </div>
+      <div class="gallery-item"><img
+          src="https://images.unsplash.com/photo-1551085254-e96b210db58a?w=500&auto=format&fit=crop&q=80" alt="Owl"
+          loading="lazy">
+        <div class="gallery-item-info"><span class="g-cat">Birds</span><span class="g-name">Barn Owl</span></div>
+      </div>
+      <div class="gallery-item"><img
+          src="https://images.unsplash.com/photo-1504173010664-32509107de0c?w=500&auto=format&fit=crop&q=80"
+          alt="Forest" loading="lazy">
+        <div class="gallery-item-info"><span class="g-cat">Nature</span><span class="g-name">Ancient Forest</span></div>
+      </div>
+      <div class="gallery-item"><img
+          src="https://images.unsplash.com/photo-1564760055775-d63b17a55c44?w=500&auto=format&fit=crop&q=80" alt="Lion"
+          loading="lazy">
+        <div class="gallery-item-info"><span class="g-cat">Animals</span><span class="g-name">Resting Lion</span></div>
+      </div>
+      <div class="gallery-item"><img
+          src="https://images.unsplash.com/photo-1549366021-9f761d040a94?w=500&auto=format&fit=crop&q=80" alt="Eagle"
+          loading="lazy">
+        <div class="gallery-item-info"><span class="g-cat">Birds</span><span class="g-name">Bald Eagle</span></div>
+      </div>
+      <div class="gallery-item"><img
+          src="https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?w=500&auto=format&fit=crop&q=80"
+          alt="Turtle" loading="lazy">
+        <div class="gallery-item-info"><span class="g-cat">Animals</span><span class="g-name">Sea Turtle</span></div>
+      </div>
+      <div class="gallery-item"><img
+          src="https://images.unsplash.com/photo-1516912481808-3406841bd33c?w=500&auto=format&fit=crop&q=80"
+          alt="Elephant" loading="lazy">
+        <div class="gallery-item-info"><span class="g-cat">Animals</span><span class="g-name">African Elephant</span>
+        </div>
+      </div>
+      <div class="gallery-item"><img
+          src="https://images.unsplash.com/photo-1500479694472-551d1fb6258d?w=500&auto=format&fit=crop&q=80"
+          alt="Sunrise" loading="lazy">
+        <div class="gallery-item-info"><span class="g-cat">Nature</span><span class="g-name">Safari Sunrise</span></div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:3rem" class="fade-up">
+      <a href="gallery.html" class="btn btn-outline">View Full Gallery — 30+ Photos</a>
+    </div>
+  </section>
+
+  <section class="testi-section">
+    <div class="section-head fade-up">
+      <div class="section-label">Student Reviews</div>
+      <h2 class="section-title">What They <em>Say</em></h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card fade-up">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"This course completely transformed how I look at wildlife. My photos went from ordinary
+          snapshots to award-worthy shots in just 3 months!"</p>
+        <div class="testi-author">Priya Sharma</div>
+        <div class="testi-role">Mumbai — Beginner Course</div>
+      </div>
+      <div class="testi-card fade-up" style="transition-delay:.1s">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"I learned more in 2 weeks than in 2 years of self-study. The bird photography module
+          alone is worth every rupee. Aryan explains everything so clearly."</p>
+        <div class="testi-author">Arjun Mehta</div>
+        <div class="testi-role">Delhi — Intermediate Course</div>
+      </div>
+      <div class="testi-card fade-up" style="transition-delay:.2s">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"The safari tips changed everything. Got my first National Geographic submission accepted
+          after this course. Can't believe the transformation!"</p>
+        <div class="testi-author">Kavita Nair</div>
+        <div class="testi-role">Bangalore — Masterclass</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-full fade-up">
+    <div class="cta-full-bg"></div>
+    <div class="cta-full-overlay"></div>
+    <div class="cta-full-content">
+      <h2>Start Your <em style="color:var(--gold);font-style:italic">Wild</em> Journey</h2>
+      <p>Join 2,400+ students already capturing wildlife like professionals. Your first lesson is completely free.</p>
+      <div class="cta-btns">
+        <a href="courses.html" class="btn btn-primary">Start Free Today</a>
+        <a href="contact.html" class="btn btn-outline">Get in Touch</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand"><a href="index.html" class="logo">Wild<span>Lens</span></a>
+        <p>Professional wildlife photography education for aspiring naturalists and photographers worldwide.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Learn</h4>
+        <ul>
+          <li><a href="courses.html">All Courses</a></li>
+          <li><a href="videos.html">Video Tutorials</a></li>
+          <li><a href="blog.html">Blog</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="gallery.html">Gallery</a></li>
+          <li><a href="about.html">About Me</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Follow</h4>
+        <ul>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">YouTube</a></li>
+          <li><a href="#">Facebook</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 WildLens Photography. All rights reserved.</p>
+      <p style="color:rgba(124,179,66,.5)">Photos via Unsplash — Free for use</p>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+  <script>
+
+    const counters = document.querySelectorAll('[data-target]');
+    const co = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const el = e.target, t = +el.dataset.target;
+          let c = 0; const step = t / 55;
+          const tm = setInterval(() => { c = Math.min(c + step, t); el.textContent = Math.floor(c) + (t === 49 ? '.0' : '+') +; if (c >= t) clearInterval(tm); }, 22);
+          co.unobserve(el);
+        }
+      });
+    }, { threshold: .5 });
+    counters.forEach(c => co.observe(c));
+  </script>
+  <script src="enhancements.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wildlife Map — WildLens</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .map-hero {
+      padding: 8rem 5% 4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden
+    }
+
+    .map-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 80%, rgba(31, 74, 44, .4), transparent 65%);
+      pointer-events: none
+    }
+
+    .map-hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 6vw, 5rem);
+      font-weight: 900;
+      line-height: .95;
+      margin-bottom: 1rem;
+      position: relative
+    }
+
+    .map-hero p {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 500px;
+      margin: 0 auto 2rem;
+      line-height: 1.75;
+      position: relative
+    }
+
+    .map-wrap {
+      padding: 2rem 5% 6rem;
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 2rem;
+      align-items: start
+    }
+
+    .india-map-container {
+      background: rgba(22, 51, 32, .2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2rem;
+      position: relative;
+      min-height: 500px;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .india-svg {
+      width: 100%;
+      max-width: 500px
+    }
+
+    .spot-dot {
+      cursor: none;
+      transition: r .2s;
+      fill: var(--lime)
+    }
+
+    .spot-dot:hover {
+      fill: var(--gold)
+    }
+
+    .spot-dot.active {
+      fill: var(--gold)
+    }
+
+    .spot-label {
+      font-family: 'Jost', sans-serif;
+      font-size: 10px;
+      fill: rgba(234, 230, 220, .7);
+      pointer-events: none
+    }
+
+    .map-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem
+    }
+
+    .sidebar-header {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: .5rem
+    }
+
+    .sidebar-sub {
+      font-size: .82rem;
+      color: var(--muted);
+      margin-bottom: 1rem
+    }
+
+    .spot-card {
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, .02);
+      padding: 1.1rem 1.25rem;
+      cursor: none;
+      transition: all .25s
+    }
+
+    .spot-card.active,
+    .spot-card:hover {
+      border-color: rgba(124, 179, 66, .4);
+      background: rgba(124, 179, 66, .06)
+    }
+
+    .spot-card-header {
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+      margin-bottom: .4rem
+    }
+
+    .spot-icon {
+      font-size: 1.4rem;
+      flex-shrink: 0
+    }
+
+    .spot-name {
+      font-size: .92rem;
+      font-weight: 500
+    }
+
+    .spot-state {
+      font-size: .7rem;
+      color: var(--lime);
+      letter-spacing: .08em
+    }
+
+    .spot-animals {
+      font-size: .78rem;
+      color: var(--muted);
+      margin-top: .3rem
+    }
+
+    .spot-detail-panel {
+      background: rgba(22, 51, 32, .3);
+      border: 1px solid rgba(124, 179, 66, .2);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-top: 1rem;
+      display: none
+    }
+
+    .spot-detail-panel.show {
+      display: block
+    }
+
+    .sdp-img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      display: block
+    }
+
+    .sdp-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: .5rem
+    }
+
+    .sdp-animals {
+      display: flex;
+      gap: .4rem;
+      flex-wrap: wrap;
+      margin-bottom: .75rem
+    }
+
+    .sdp-tag {
+      font-size: .65rem;
+      padding: .2rem .65rem;
+      border-radius: 999px;
+      background: rgba(124, 179, 66, .15);
+      color: var(--lime);
+      border: 1px solid rgba(124, 179, 66, .25)
+    }
+
+    .sdp-info {
+      font-size: .82rem;
+      color: var(--muted);
+      line-height: 1.65
+    }
+
+    .sdp-best {
+      font-size: .75rem;
+      color: var(--gold);
+      margin-top: .5rem
+    }
+
+    @media(max-width:900px) {
+      .map-wrap {
+        grid-template-columns: 1fr
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="cur" id="cur"></div>
+  <div class="cur-r" id="curR"></div>
+  <nav>
+    <a href="index.html" class="logo">Wild<span>Lens</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="courses.html">Courses</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="videos.html">Videos</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html" class="nav-cta">Contact</a></li>
+    </ul>
+  </nav>
+  <div class="map-hero">
+    <div class="section-label" style="justify-content:center">India Wildlife Map</div>
+    <h1>Explore India's <em style="color:var(--gold);font-style:italic">Wild Places</em></h1>
+    <p>India ke best wildlife sanctuaries aur national parks — click karo aur discover karo kahan kya milega!</p>
+  </div>
+  <div class="map-wrap">
+    <div class="india-map-container fade-up">
+      <svg class="india-svg" viewBox="0 0 400 480" xmlns="http://www.w3.org/2000/svg">
+
+        <path
+          d="M180,20 L220,18 L260,30 L290,55 L300,80 L310,100 L320,130 L315,160 L300,185 L290,210 L295,240 L285,270 L270,295 L255,320 L240,345 L225,370 L210,390 L200,420 L195,445 L185,430 L175,400 L165,375 L150,350 L135,325 L120,300 L108,270 L100,240 L95,210 L90,180 L80,155 L75,130 L80,105 L90,80 L110,55 L140,35 Z"
+          fill="rgba(22,51,32,0.6)" stroke="rgba(124,179,66,0.4)" stroke-width="1.5" />
+
+        <path d="M170,20 L180,10 L200,5 L220,8 L230,18 L220,18 L180,20Z" fill="rgba(22,51,32,0.5)"
+          stroke="rgba(124,179,66,0.3)" stroke-width="1" />
+        <!-- NE India rough -->
+        <path d="M300,100 L320,90 L350,100 L360,120 L340,140 L320,130Z" fill="rgba(22,51,32,0.5)"
+          stroke="rgba(124,179,66,0.3)" stroke-width="1" />
+
+        <ellipse cx="360" cy="350" rx="12" ry="30" fill="rgba(22,51,32,0.5)" stroke="rgba(124,179,66,0.3)"
+          stroke-width="1" />
+
+        <circle class="spot-dot" id="dot-0" cx="190" cy="80" r="8" onclick="selectSpot(0)" />
+        <text class="spot-label" x="200" y="78" font-size="9">Jim Corbett</text>
+
+        <circle class="spot-dot" id="dot-1" cx="155" cy="145" r="8" onclick="selectSpot(1)" />
+        <text class="spot-label" x="115" y="143" font-size="9">Ranthambore</text>
+
+        <circle class="spot-dot" id="dot-2" cx="310" cy="115" r="8" onclick="selectSpot(2)" />
+        <text class="spot-label" x="318" y="113" font-size="9">Kaziranga</text>
+
+        <circle class="spot-dot" id="dot-3" cx="220" cy="190" r="8" onclick="selectSpot(3)" />
+        <text class="spot-label" x="228" y="188" font-size="9">Bandhavgarh</text>
+
+        <circle class="spot-dot" id="dot-4" cx="295" cy="175" r="8" onclick="selectSpot(4)" />
+        <text class="spot-label" x="303" y="173" font-size="9">Sundarbans</text>
+
+        <circle class="spot-dot" id="dot-5" cx="165" cy="130" r="7" onclick="selectSpot(5)" />
+        <text class="spot-label" x="125" y="128" font-size="9">Bharatpur</text>
+
+        <circle class="spot-dot" id="dot-6" cx="175" cy="360" r="7" onclick="selectSpot(6)" />
+        <text class="spot-label" x="132" y="358" font-size="9">Silent Valley</text>
+
+        <circle class="spot-dot" id="dot-7" cx="110" cy="195" r="7" onclick="selectSpot(7)" />
+        <text class="spot-label" x="68" y="193" font-size="9">Gir Forest</text>
+
+        <circle cx="25" cy="440" r="6" fill="var(--lime)" />
+        <text x="35" y="444" font-size="9" fill="rgba(234,230,220,.6)">Wildlife Spot — Click to explore</text>
+      </svg>
+    </div>
+
+    <div class="map-sidebar">
+      <div class="sidebar-header">India's Top Wild Places</div>
+      <div class="sidebar-sub">Kisi bhi park pe click karo detailed info ke liye</div>
+
+      <div id="spot-list">
+        <div class="spot-card" id="card-0" onclick="selectSpot(0)">
+          <div class="spot-card-header"><span class="spot-icon">🐅</span>
+            <div>
+              <div class="spot-name">Jim Corbett NP</div>
+              <div class="spot-state">Uttarakhand</div>
+            </div>
+          </div>
+          <div class="spot-animals">Tiger, Elephant, Leopard, Gharial</div>
+        </div>
+        <div class="spot-card" id="card-1" onclick="selectSpot(1)">
+          <div class="spot-card-header"><span class="spot-icon">🐅</span>
+            <div>
+              <div class="spot-name">Ranthambore NP</div>
+              <div class="spot-state">Rajasthan</div>
+            </div>
+          </div>
+          <div class="spot-animals">Bengal Tiger, Leopard, Sloth Bear</div>
+        </div>
+        <div class="spot-card" id="card-2" onclick="selectSpot(2)">
+          <div class="spot-card-header"><span class="spot-icon">🦏</span>
+            <div>
+              <div class="spot-name">Kaziranga NP</div>
+              <div class="spot-state">Assam</div>
+            </div>
+          </div>
+          <div class="spot-animals">One-horned Rhino, Tiger, Elephant</div>
+        </div>
+        <div class="spot-card" id="card-3" onclick="selectSpot(3)">
+          <div class="spot-card-header"><span class="spot-icon">🐅</span>
+            <div>
+              <div class="spot-name">Bandhavgarh NP</div>
+              <div class="spot-state">Madhya Pradesh</div>
+            </div>
+          </div>
+          <div class="spot-animals">Highest Tiger Density in India!</div>
+        </div>
+        <div class="spot-card" id="card-4" onclick="selectSpot(4)">
+          <div class="spot-card-header"><span class="spot-icon">🐯</span>
+            <div>
+              <div class="spot-name">Sundarbans NP</div>
+              <div class="spot-state">West Bengal</div>
+            </div>
+          </div>
+          <div class="spot-animals">Royal Bengal Tiger, Irrawaddy Dolphin</div>
+        </div>
+        <div class="spot-card" id="card-5" onclick="selectSpot(5)">
+          <div class="spot-card-header"><span class="spot-icon">🦩</span>
+            <div>
+              <div class="spot-name">Bharatpur Bird Sanctuary</div>
+              <div class="spot-state">Rajasthan</div>
+            </div>
+          </div>
+          <div class="spot-animals">400+ Bird Species, Migratory Birds</div>
+        </div>
+        <div class="spot-card" id="card-6" onclick="selectSpot(6)">
+          <div class="spot-card-header"><span class="spot-icon">🐘</span>
+            <div>
+              <div class="spot-name">Silent Valley NP</div>
+              <div class="spot-state">Kerala</div>
+            </div>
+          </div>
+          <div class="spot-animals">Lion-tailed Macaque, Elephant, Tiger</div>
+        </div>
+        <div class="spot-card" id="card-7" onclick="selectSpot(7)">
+          <div class="spot-card-header"><span class="spot-icon">🦁</span>
+            <div>
+              <div class="spot-name">Gir Forest NP</div>
+              <div class="spot-state">Gujarat</div>
+            </div>
+          </div>
+          <div class="spot-animals">Asiatic Lion — Only place in world!</div>
+        </div>
+      </div>
+
+      <div class="spot-detail-panel" id="detail-panel">
+        <img id="detail-img" src="" alt="" class="sdp-img">
+        <div class="sdp-title" id="detail-title"></div>
+        <div class="sdp-animals" id="detail-animals"></div>
+        <div class="sdp-info" id="detail-info"></div>
+        <div class="sdp-best" id="detail-best"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand"><a href="index.html" class="logo">Wild<span>Lens</span></a>
+        <p>Wildlife photography education worldwide.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="gallery.html">Gallery</a></li>
+          <li><a href="quiz.html">Wildlife Quiz</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Learn</h4>
+        <ul>
+          <li><a href="courses.html">Courses</a></li>
+          <li><a href="videos.html">Videos</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="pricing.html">Pricing</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 WildLens Photography.</p>
+    </div>
+  </footer>
+  <script src="main.js"></script>
+  <script>
+    const spots = [
+      { name: "Jim Corbett National Park", state: "Uttarakhand", img: "https://images.unsplash.com/photo-1561731216-c3a4d99437d5?w=600&auto=format&fit=crop&q=80", animals: ["Bengal Tiger", "Elephant", "Leopard", "Gharial", "300+ Birds"], info: "India ka pehla national park (1936). Jim Corbett ek photographer ka sapna hai — dense sal forests, river beds aur grasslands mein amazing wildlife milti hai.", best: "📅 Best Time: November – June" },
+      { name: "Ranthambore National Park", state: "Rajasthan", img: "https://images.unsplash.com/photo-1564760055775-d63b17a55c44?w=600&auto=format&fit=crop&q=80", animals: ["Bengal Tiger", "Leopard", "Sloth Bear", "Crocodile", "Deer"], info: "Rajasthan ke dil mein basa yeh park daytime mein tiger sightings ke liye famous hai. Purani fort ki background mein tiger ka photo — ekdum iconic!", best: "📅 Best Time: October – June" },
+      { name: "Kaziranga National Park", state: "Assam", img: "https://images.unsplash.com/photo-1516912481808-3406841bd33c?w=600&auto=format&fit=crop&q=80", animals: ["One-horned Rhino", "Bengal Tiger", "Asian Elephant", "Wild Buffalo", "Swamp Deer"], info: "UNESCO World Heritage Site. Duniya ke 2/3 One-horned Rhinos yahan hain. Brahmaputra ke kinare yeh park extraordinary hai.", best: "📅 Best Time: November – April" },
+      { name: "Bandhavgarh National Park", state: "Madhya Pradesh", img: "https://images.unsplash.com/photo-1612404730960-5c71577fca11?w=600&auto=format&fit=crop&q=80", animals: ["Bengal Tiger", "Leopard", "Gaur", "Chital", "Sambar Deer"], info: "India mein sabse zyada Tiger density yahan hai! Purana Bandhavgarh fort ek historic background deta hai aur tiger sightings almost guaranteed hain.", best: "📅 Best Time: October – June" },
+      { name: "Sundarbans National Park", state: "West Bengal", img: "https://images.unsplash.com/photo-1474511320723-9a56873867b5?w=600&auto=format&fit=crop&q=80", animals: ["Royal Bengal Tiger", "Irrawaddy Dolphin", "Estuarine Crocodile", "Olive Ridley Turtle", "King Cobra"], info: "Duniya ka sabse bada mangrove forest. Yahan ke tigers swimming karte hain — bilkul unique! Boat safari se photography ki jaati hai.", best: "📅 Best Time: September – March" },
+      { name: "Bharatpur Bird Sanctuary", state: "Rajasthan", img: "https://images.unsplash.com/photo-1549366021-9f761d040a94?w=600&auto=format&fit=crop&q=80", animals: ["Siberian Crane", "Bar-headed Goose", "Sarus Crane", "Painted Stork", "400+ Bird Species"], info: "UNESCO World Heritage Site — bird photographers ka paradise! Sirf 2 ghante Delhi se. Winter mein Siberia se migratory birds aate hain.", best: "📅 Best Time: October – February (Peak Birds)" },
+      { name: "Silent Valley National Park", state: "Kerala", img: "https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=600&auto=format&fit=crop&q=80", animals: ["Lion-tailed Macaque", "Asian Elephant", "Tiger", "Nilgiri Langur", "Malabar Giant Squirrel"], info: "Kerala ka ek pristine rainforest — human disturbance se bilkul door. Rare Lion-tailed Macaque aur rich biodiversity ke liye famous.", best: "📅 Best Time: December – April" },
+      { name: "Gir Forest National Park", state: "Gujarat", img: "https://images.unsplash.com/photo-1503431128871-cd250803fa41?w=600&auto=format&fit=crop&q=80", animals: ["Asiatic Lion", "Leopard", "Marsh Crocodile", "Indian Python", "Hyena"], info: "Duniya mein sirf yehi jagah hai jahan wild Asiatic Lions milte hain! 600+ lions hain aaj. Ek once-in-a-lifetime wildlife experience.", best: "📅 Best Time: December – June" }
+    ];
+
+    let active = -1;
+    function selectSpot(idx) {
+      // Reset all
+      document.querySelectorAll('.spot-card').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.spot-dot').forEach(d => d.classList.remove('active'));
+      // Activate
+      document.getElementById('card-' + idx).classList.add('active');
+      document.getElementById('dot-' + idx).classList.add('active');
+      const s = spots[idx];
+      document.getElementById('detail-img').src = s.img;
+      document.getElementById('detail-title').textContent = s.name + ' — ' + s.state;
+      document.getElementById('detail-animals').innerHTML = s.animals.map(a => `<span class="sdp-tag">${a}</span>`).join('');
+      document.getElementById('detail-info').textContent = s.info;
+      document.getElementById('detail-best').textContent = s.best;
+      document.getElementById('detail-panel').classList.add('show');
+      active = idx;
+    }
+    selectSpot(0);
+  </script>
+</body>
+
+</html>

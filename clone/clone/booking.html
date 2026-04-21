@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book a Workshop — WildLens</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .booking-hero {
+      padding: 8rem 5% 4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden
+    }
+
+    .booking-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 80%, rgba(31, 74, 44, .4), transparent 65%);
+      pointer-events: none
+    }
+
+    .booking-hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 6vw, 5rem);
+      font-weight: 900;
+      line-height: .95;
+      margin-bottom: 1rem;
+      position: relative
+    }
+
+    .booking-hero p {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 480px;
+      margin: 0 auto 2rem;
+      line-height: 1.75;
+      position: relative
+    }
+
+    .booking-wrap {
+      padding: 3rem 5% 6rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start
+    }
+
+    .workshop-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem
+    }
+
+    .ws-card {
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      background: rgba(255, 255, 255, .02);
+      transition: border-color .3s, transform .3s;
+      cursor: none
+    }
+
+    .ws-card:hover {
+      border-color: rgba(124, 179, 66, .3);
+      transform: translateX(4px)
+    }
+
+    .ws-card.selected {
+      border-color: var(--lime);
+      background: rgba(124, 179, 66, .06)
+    }
+
+    .ws-img {
+      height: 150px;
+      overflow: hidden
+    }
+
+    .ws-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .5s
+    }
+
+    .ws-card:hover .ws-img img {
+      transform: scale(1.05)
+    }
+
+    .ws-body {
+      padding: 1.1rem 1.25rem
+    }
+
+    .ws-tag {
+      font-size: .62rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--lime);
+      margin-bottom: .4rem;
+      display: block
+    }
+
+    .ws-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: .35rem
+    }
+
+    .ws-meta {
+      font-size: .75rem;
+      color: var(--muted);
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: .75rem
+    }
+
+    .ws-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--lime)
+    }
+
+    .ws-spots {
+      font-size: .7rem;
+      color: var(--gold);
+      margin-left: .75rem
+    }
+
+    .ws-select-btn {
+      width: 100%;
+      padding: .65rem;
+      border-radius: 999px;
+      background: transparent;
+      border: 1px solid rgba(124, 179, 66, .3);
+      color: var(--lime);
+      font-family: 'Jost', sans-serif;
+      font-size: .75rem;
+      cursor: none;
+      transition: all .2s;
+      letter-spacing: .06em;
+      margin-top: .75rem
+    }
+
+    .ws-card.selected .ws-select-btn {
+      background: var(--lime);
+      color: var(--black);
+      border-color: var(--lime)
+    }
+
+    .ws-select-btn:hover {
+      background: rgba(124, 179, 66, .15)
+    }
+
+    .booking-form-box {
+      background: rgba(22, 51, 32, .2);
+      border: 1px solid rgba(124, 179, 66, .15);
+      border-radius: 22px;
+      padding: 2.5rem;
+      position: sticky;
+      top: 6rem
+    }
+
+    .bf-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: .4rem
+    }
+
+    .bf-sub {
+      font-size: .83rem;
+      color: var(--muted);
+      margin-bottom: 2rem
+    }
+
+    .bf-selected {
+      background: rgba(124, 179, 66, .1);
+      border: 1px solid rgba(124, 179, 66, .25);
+      border-radius: 10px;
+      padding: .75rem 1rem;
+      font-size: .82rem;
+      margin-bottom: 1.5rem;
+      color: var(--lime);
+      display: none
+    }
+
+    .bf-selected.show {
+      display: block
+    }
+
+    .fg {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 1rem
+    }
+
+    .fg label {
+      font-size: .72rem;
+      color: var(--muted);
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      font-weight: 500
+    }
+
+    .fg input,
+    .fg select,
+    .fg textarea {
+      background: rgba(255, 255, 255, .04);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: .75rem 1rem;
+      color: var(--text);
+      font-family: 'Jost', sans-serif;
+      font-size: .86rem;
+      outline: none;
+      transition: border-color .2s;
+      width: 100%
+    }
+
+    .fg input:focus,
+    .fg select:focus,
+    .fg textarea:focus {
+      border-color: rgba(124, 179, 66, .5)
+    }
+
+    .fg select option {
+      background: var(--dark)
+    }
+
+    .bf-submit {
+      width: 100%;
+      padding: .95rem;
+      background: var(--lime);
+      color: var(--black);
+      border: none;
+      border-radius: 999px;
+      font-family: 'Jost', sans-serif;
+      font-size: .88rem;
+      font-weight: 600;
+      cursor: none;
+      transition: all .3s;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      margin-top: .5rem
+    }
+
+    .bf-submit:hover {
+      background: var(--gold);
+      transform: translateY(-2px)
+    }
+
+    .bf-note {
+      font-size: .72rem;
+      color: var(--muted);
+      text-align: center;
+      margin-top: .75rem
+    }
+
+    .bf-success {
+      display: none;
+      text-align: center;
+      padding: 2rem
+    }
+
+    .bf-success-icon {
+      font-size: 3rem;
+      display: block;
+      margin-bottom: 1rem
+    }
+
+    .bf-success h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--lime);
+      margin-bottom: .5rem
+    }
+
+    .bf-success p {
+      font-size: .85rem;
+      color: var(--muted);
+      line-height: 1.65
+    }
+
+    .schedule-section {
+      padding: 4rem 5% 6rem;
+      background: var(--dark)
+    }
+
+    .schedule-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-top: 3rem
+    }
+
+    .sch-card {
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, .02);
+      transition: border-color .3s
+    }
+
+    .sch-card:hover {
+      border-color: rgba(124, 179, 66, .3)
+    }
+
+    .sch-date {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--lime);
+      display: block;
+      line-height: 1
+    }
+
+    .sch-month {
+      font-size: .72rem;
+      color: var(--muted);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-bottom: .75rem
+    }
+
+    .sch-title {
+      font-size: .92rem;
+      font-weight: 500;
+      margin-bottom: .35rem
+    }
+
+    .sch-location {
+      font-size: .75rem;
+      color: var(--muted);
+      margin-bottom: .75rem
+    }
+
+    .sch-status {
+      font-size: .65rem;
+      padding: .25rem .7rem;
+      border-radius: 999px;
+      font-weight: 500
+    }
+
+    .status-open {
+      background: rgba(124, 179, 66, .15);
+      color: var(--lime);
+      border: 1px solid rgba(124, 179, 66, .3)
+    }
+
+    .status-few {
+      background: rgba(200, 169, 81, .15);
+      color: var(--gold);
+      border: 1px solid rgba(200, 169, 81, .3)
+    }
+
+    .status-full {
+      background: rgba(220, 80, 80, .12);
+      color: #f87171;
+      border: 1px solid rgba(220, 80, 80, .25)
+    }
+
+    @media(max-width:900px) {
+      .booking-wrap {
+        grid-template-columns: 1fr
+      }
+
+      .booking-form-box {
+        position: static
+      }
+
+      .schedule-grid {
+        grid-template-columns: 1fr 1fr
+      }
+    }
+
+    @media(max-width:600px) {
+      .schedule-grid {
+        grid-template-columns: 1fr
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="cur" id="cur"></div>
+  <div class="cur-r" id="curR"></div>
+  <nav>
+    <a href="index.html" class="logo">Wild<span>Lens</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="courses.html">Courses</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="videos.html">Videos</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html" class="nav-cta">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="booking-hero">
+    <div class="section-label" style="justify-content:center">Book Your Spot</div>
+    <h1>Workshops & <em style="color:var(--gold);font-style:italic">Safaris</em></h1>
+    <p>Real field experience — join me in India's most iconic wildlife destinations. Seats are very limited!</p>
+  </div>
+
+  <div class="booking-wrap">
+    <div class="workshop-list">
+      <div class="section-label">Upcoming Workshops</div>
+
+      <div class="ws-card" id="ws-0"
+        onclick="selectWorkshop(0,'Ranthambore Tiger Safari Workshop','May 2025','₹15,000')">
+        <div class="ws-img"><img
+            src="https://images.unsplash.com/photo-1561731216-c3a4d99437d5?w=600&auto=format&fit=crop&q=80" alt="Tiger"
+            loading="lazy"></div>
+        <div class="ws-body">
+          <span class="ws-tag">Safari Workshop</span>
+          <div class="ws-title">Ranthambore Tiger Safari</div>
+          <div class="ws-meta"><span>📅 May 15-18, 2025</span><span>👥 8 seats max</span><span>📍 Rajasthan</span></div>
+          <div><span class="ws-price">₹15,000</span><span class="ws-spots">⚡ 3 spots left!</span></div>
+          <button class="ws-select-btn" id="ws-btn-0">Select This Workshop</button>
+        </div>
+      </div>
+
+      <div class="ws-card" id="ws-1" onclick="selectWorkshop(1,'Jim Corbett Bird Photography','June 2025','₹12,000')">
+        <div class="ws-img"><img
+            src="https://images.unsplash.com/photo-1549366021-9f761d040a94?w=600&auto=format&fit=crop&q=80" alt="Bird"
+            loading="lazy"></div>
+        <div class="ws-body">
+          <span class="ws-tag">Bird Photography</span>
+          <div class="ws-title">Jim Corbett Bird Photography</div>
+          <div class="ws-meta"><span>📅 June 5-8, 2025</span><span>👥 6 seats max</span><span>📍 Uttarakhand</span>
+          </div>
+          <div><span class="ws-price">₹12,000</span><span class="ws-spots">⚡ 5 spots left</span></div>
+          <button class="ws-select-btn" id="ws-btn-1">Select This Workshop</button>
+        </div>
+      </div>
+
+      <div class="ws-card" id="ws-2" onclick="selectWorkshop(2,'Kaziranga Rhino Safari','October 2025','₹18,000')">
+        <div class="ws-img"><img
+            src="https://images.unsplash.com/photo-1516912481808-3406841bd33c?w=600&auto=format&fit=crop&q=80"
+            alt="Rhino" loading="lazy"></div>
+        <div class="ws-body">
+          <span class="ws-tag">Exclusive Safari</span>
+          <div class="ws-title">Kaziranga Rhino Safari</div>
+          <div class="ws-meta"><span>📅 Oct 10-14, 2025</span><span>👥 6 seats max</span><span>📍 Assam</span></div>
+          <div><span class="ws-price">₹18,000</span><span class="ws-spots">Open</span></div>
+          <button class="ws-select-btn" id="ws-btn-2">Select This Workshop</button>
+        </div>
+      </div>
+
+      <div class="ws-card" id="ws-3"
+        onclick="selectWorkshop(3,'Kerala Forest & Birds Retreat','November 2025','₹14,000')">
+        <div class="ws-img"><img
+            src="https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=600&auto=format&fit=crop&q=80"
+            alt="Forest" loading="lazy"></div>
+        <div class="ws-body">
+          <span class="ws-tag">Nature Retreat</span>
+          <div class="ws-title">Kerala Forest & Birds Retreat</div>
+          <div class="ws-meta"><span>📅 Nov 2-6, 2025</span><span>👥 8 seats max</span><span>📍 Kerala</span></div>
+          <div><span class="ws-price">₹14,000</span><span class="ws-spots">Open</span></div>
+          <button class="ws-select-btn" id="ws-btn-3">Select This Workshop</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="booking-form-box fade-up">
+      <div id="form-content">
+        <div class="bf-title">Reserve Your Seat</div>
+        <p class="bf-sub">Form fill karo — main personally confirm karunga within 24 hours.</p>
+        <div class="bf-selected" id="selected-display">📸 No workshop selected yet</div>
+        <div class="fg"><label>Full Name *</label><input type="text" placeholder="Arjun Mehta"></div>
+        <div class="fg"><label>Email *</label><input type="email" placeholder="arjun@email.com"></div>
+        <div class="fg"><label>Phone / WhatsApp *</label><input type="tel" placeholder="+91 98765 00000"></div>
+        <div class="fg"><label>Workshop *</label>
+          <select id="workshop-select">
+            <option>Select a workshop...</option>
+            <option>Ranthambore Tiger Safari — May 2025 (₹15,000)</option>
+            <option>Jim Corbett Birds — June 2025 (₹12,000)</option>
+            <option>Kaziranga Rhino Safari — Oct 2025 (₹18,000)</option>
+            <option>Kerala Forest Retreat — Nov 2025 (₹14,000)</option>
+          </select>
+        </div>
+        <div class="fg"><label>Experience Level</label>
+          <select>
+            <option>Beginner</option>
+            <option>Intermediate</option>
+            <option>Advanced</option>
+          </select>
+        </div>
+        <div class="fg"><label>Any Questions?</label><textarea
+            placeholder="Camera gear, accommodation, what to bring..." style="min-height:80px"></textarea></div>
+        <button class="bf-submit" onclick="submitBooking()">Book My Seat →</button>
+        <p class="bf-note">🔒 Seat confirmation + full payment details email mein bheje jayenge</p>
+      </div>
+      <div class="bf-success" id="bf-success">
+        <span class="bf-success-icon">🎉</span>
+        <h3>Booking Received!</h3>
+        <p>Bahut shukriya! Main aapko 24 ghante mein personally confirm karunga. WhatsApp pe bhi message aa sakta hai!
+        </p>
+        <a href="index.html" class="btn btn-outline" style="margin-top:1.5rem;display:inline-block">Back to Home</a>
+      </div>
+    </div>
+  </div>
+
+  <section class="schedule-section">
+    <div class="section-head fade-up">
+      <div class="section-label">Full Schedule 2025</div>
+      <h2 class="section-title">All <em>Events</em></h2>
+    </div>
+    <div class="schedule-grid fade-up">
+      <div class="sch-card"><span class="sch-date">15</span><span class="sch-month">May 2025</span>
+        <div class="sch-title">Ranthambore Tiger Safari</div>
+        <div class="sch-location">📍 Rajasthan — 4 Days</div><span class="sch-status status-few">⚡ 3 Spots Left</span>
+      </div>
+      <div class="sch-card"><span class="sch-date">05</span><span class="sch-month">June 2025</span>
+        <div class="sch-title">Jim Corbett Bird Photography</div>
+        <div class="sch-location">📍 Uttarakhand — 4 Days</div><span class="sch-status status-open">Open</span>
+      </div>
+      <div class="sch-card"><span class="sch-date">20</span><span class="sch-month">July 2025</span>
+        <div class="sch-title">Beginner Camera Workshop</div>
+        <div class="sch-location">📍 Delhi — 1 Day Indoor</div><span class="sch-status status-open">Open</span>
+      </div>
+      <div class="sch-card"><span class="sch-date">10</span><span class="sch-month">October 2025</span>
+        <div class="sch-title">Kaziranga Rhino Safari</div>
+        <div class="sch-location">📍 Assam — 5 Days</div><span class="sch-status status-open">Open</span>
+      </div>
+      <div class="sch-card"><span class="sch-date">02</span><span class="sch-month">November 2025</span>
+        <div class="sch-title">Kerala Forest Retreat</div>
+        <div class="sch-location">📍 Kerala — 5 Days</div><span class="sch-status status-open">Open</span>
+      </div>
+      <div class="sch-card"><span class="sch-date">15</span><span class="sch-month">December 2025</span>
+        <div class="sch-title">Bharatpur Migratory Birds</div>
+        <div class="sch-location">📍 Rajasthan — 3 Days</div><span class="sch-status status-open">Coming Soon</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand"><a href="index.html" class="logo">Wild<span>Lens</span></a>
+        <p>Wildlife photography education worldwide.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Learn</h4>
+        <ul>
+          <li><a href="courses.html">Courses</a></li>
+          <li><a href="videos.html">Videos</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="gallery.html">Gallery</a></li>
+          <li><a href="map.html">Wildlife Map</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="pricing.html">Pricing</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 WildLens Photography.</p>
+    </div>
+  </footer>
+  <script src="main.js"></script>
+  <script>
+    let selectedWs = '';
+    function selectWorkshop(idx, name, date, price) {
+      document.querySelectorAll('.ws-card').forEach(c => c.classList.remove('selected'));
+      document.querySelectorAll('.ws-select-btn').forEach(b => { b.textContent = 'Select This Workshop'; });
+      document.getElementById('ws-' + idx).classList.add('selected');
+      document.getElementById('ws-btn-' + idx).textContent = '✓ Selected';
+      selectedWs = name;
+      const disp = document.getElementById('selected-display');
+      disp.textContent = '📸 ' + name + ' — ' + date + ' — ' + price;
+      disp.classList.add('show');
+    }
+    function submitBooking() {
+      document.getElementById('form-content').style.display = 'none';
+      document.getElementById('bf-success').style.display = 'block';
+    }
+    async function submitBooking() {
+      // Simulate form submission delay
+      await new Promise(r => setTimeout(r, 1000));
+      document.getElementById('form-content').style.display = 'none';
+      document.getElementById('bf-success').style.display = 'block';
+    }
+  </script>
+</body>
+
+</html>

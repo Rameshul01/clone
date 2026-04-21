@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gallery — WildLens</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .gallery-section {
+      padding: 5rem 5%
+    }
+
+    .filter-bar {
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+      margin-bottom: 3rem
+    }
+
+    .filter-btn {
+      padding: .45rem 1.25rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      font-family: 'Jost', sans-serif;
+      font-size: .75rem;
+      cursor: none;
+      transition: all .2s;
+      letter-spacing: .06em;
+      text-transform: uppercase
+    }
+
+    .filter-btn.active,
+    .filter-btn:hover {
+      background: var(--lime);
+      color: var(--black);
+      border-color: var(--lime)
+    }
+
+    .masonry {
+      columns: 4;
+      column-gap: 1rem
+    }
+
+    .photo-item {
+      break-inside: avoid;
+      margin-bottom: 1rem;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      cursor: none
+    }
+
+    .photo-item img {
+      width: 100%;
+      display: block;
+      transition: transform .55s ease
+    }
+
+    .photo-item:hover img {
+      transform: scale(1.05)
+    }
+
+    .photo-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, .82) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity .35s;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 1rem
+    }
+
+    .photo-item:hover .photo-overlay {
+      opacity: 1
+    }
+
+    .p-cat {
+      font-size: .6rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--lime);
+      margin-bottom: 3px
+    }
+
+    .p-name {
+      font-size: .88rem;
+      font-weight: 500;
+      color: var(--text)
+    }
+
+    .p-loc {
+      font-size: .72rem;
+      color: var(--muted);
+      margin-top: 2px
+    }
+
+    .lb {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .97);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem
+    }
+
+    .lb.open {
+      display: flex
+    }
+
+    .lb-wrap {
+      max-width: 900px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 2rem;
+      align-items: center
+    }
+
+    .lb-img {
+      width: 100%;
+      border-radius: 16px;
+      max-height: 80vh;
+      object-fit: cover;
+      display: block
+    }
+
+    .lb-info {
+      padding: 1rem 0
+    }
+
+    .lb-cat {
+      font-size: .65rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--lime);
+      margin-bottom: .75rem;
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .lb-cat::before {
+      content: '';
+      width: 20px;
+      height: 1px;
+      background: var(--lime);
+      display: block
+    }
+
+    .lb-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: .75rem
+    }
+
+    .lb-location {
+      font-size: .85rem;
+      color: var(--muted);
+      margin-bottom: 1.25rem
+    }
+
+    .lb-tags {
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+      margin-top: 1.25rem
+    }
+
+    .lb-tag {
+      font-size: .7rem;
+      padding: .25rem .75rem;
+      border-radius: 999px;
+      border: 1px solid rgba(124, 179, 66, .3);
+      color: var(--lime)
+    }
+
+    .lb-close {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      background: rgba(255, 255, 255, .08);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      cursor: none;
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .lb-close:hover {
+      background: var(--lime);
+      color: var(--black);
+      border-color: var(--lime)
+    }
+
+    @media(max-width:900px) {
+      .masonry {
+        columns: 3
+      }
+    }
+
+    @media(max-width:600px) {
+      .masonry {
+        columns: 2
+      }
+
+      .lb-wrap {
+        grid-template-columns: 1fr
+      }
+    }
+
+    @media(max-width:400px) {
+      .masonry {
+        columns: 1
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="cur" id="cur"></div>
+  <div class="cur-r" id="curR"></div>
+  <nav>
+    <a href="index.html" class="logo">Wild<span>Lens</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="courses.html">Courses</a></li>
+      <li><a href="gallery.html" class="active">Gallery</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="videos.html">Videos</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html" class="nav-cta">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-hero">
+    <div class="section-label">Photo Collection</div>
+    <h1>Wild <em style="color:var(--gold);font-style:italic">Gallery</em></h1>
+    <p>30+ real wildlife photographs from across India and the world — birds, animals, and pure nature.</p>
+  </div>
+
+  <section class="gallery-section">
+    <div class="filter-bar">
+      <button class="filter-btn active" data-cat="all">All Photos (30)</button>
+      <button class="filter-btn" data-cat="birds">Birds (10)</button>
+      <button class="filter-btn" data-cat="animals">Animals (10)</button>
+      <button class="filter-btn" data-cat="nature">Nature (10)</button>
+    </div>
+
+    <div class="masonry" id="gallery">
+      <div class="photo-item" data-cat="birds"
+        onclick="openLB('https://images.unsplash.com/photo-1549366021-9f761d040a94?w=900&auto=format&fit=crop&q=85','Golden Eagle','Birds','Jim Corbett, India','Raptor,Flight,Golden Hour')">
+        <img src="https://images.unsplash.com/photo-1549366021-9f761d040a94?w=500&auto=format&fit=crop&q=80"
+          alt="Golden Eagle" loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Birds</span><span class="p-name">Golden Eagle</span><span
+            class="p-loc">📍 Jim Corbett</span></div>
+      </div>
+      <div class="photo-item" data-cat="birds"
+        onclick="openLB('https://images.unsplash.com/photo-1551085254-e96b210db58a?w=900&auto=format&fit=crop&q=85','Barn Owl','Birds','Kanha, India','Owl,Nocturnal,Portrait')">
+        <img src="https://images.unsplash.com/photo-1551085254-e96b210db58a?w=500&auto=format&fit=crop&q=80" alt="Owl"
+          loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Birds</span><span class="p-name">Barn Owl</span><span
+            class="p-loc">📍 Kanha</span></div>
+      </div>
+      <div class="photo-item" data-cat="birds"
+        onclick="openLB('https://images.unsplash.com/photo-1444464666168-49d633b86797?w=900&auto=format&fit=crop&q=85','Parrot','Birds','Kerala, India','Parrot,Tropical,Green')">
+        <img src="https://images.unsplash.com/photo-1444464666168-49d633b86797?w=500&auto=format&fit=crop&q=80"
+          alt="Parrot" loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Birds</span><span class="p-name">Indian Parrot</span><span
+            class="p-loc">📍 Kerala</span></div>
+      </div>
+      <div class="photo-item" data-cat="birds"
+        onclick="openLB('https://images.unsplash.com/photo-1452570053594-1b985d6ea890?w=900&auto=format&fit=crop&q=85','Flamingo','Birds','Rann of Kutch','Flamingo,Pink,Lake')">
+        <img src="https://images.unsplash.com/photo-1452570053594-1b985d6ea890?w=500&auto=format&fit=crop&q=80"
+          alt="Flamingo" loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Birds</span><span class="p-name">Flamingo Flock</span><span
+            class="p-loc">📍 Rann of Kutch</span></div>
+      </div>
+      <div class="photo-item" data-cat="birds"
+        onclick="openLB('https://images.unsplash.com/photo-1606567595334-d39972c85dbe?w=900&auto=format&fit=crop&q=85','Heron','Birds','Bharatpur, India','Heron,Wetlands,Water')">
+        <img src="https://images.unsplash.com/photo-1606567595334-d39972c85dbe?w=500&auto=format&fit=crop&q=80"
+          alt="Heron" loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Birds</span><span class="p-name">Grey Heron</span><span
+            class="p-loc">📍 Bharatpur</span></div>
+      </div>
+      <div class="photo-item" data-cat="birds"
+        onclick="openLB('https://images.unsplash.com/photo-1520638023360-dbd91f19cb7a?w=900&auto=format&fit=crop&q=85','Peacock','Birds','Ranthambore','Peacock,Display,Blue')">
+        <img src="https://images.unsplash.com/photo-1520638023360-dbd91f19cb7a?w=500&auto=format&fit=crop&q=80"
+          alt="Peacock" loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Birds</span><span class="p-name">Indian Peacock</span><span
+            class="p-loc">📍 Ranthambore</span></div>
+      </div>
+      <div class="photo-item" data-cat="birds"
+        onclick="openLB('https://images.unsplash.com/photo-1522926193341-e9ffd686c60f?w=900&auto=format&fit=crop&q=85','Toucan','Birds','Western Ghats','Toucan,Beak,Tropical')">
+        <img src="https://images.unsplash.com/photo-1522926193341-e9ffd686c60f?w=500&auto=format&fit=crop&q=80"
+          alt="Toucan" loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Birds</span><span class="p-name">Forest Toucan</span><span
+            class="p-loc">📍 Western Ghats</span></div>
+      </div>
+      <div class="photo-item" data-cat="birds"
+        onclick="openLB('https://images.unsplash.com/photo-1599254615628-e58c34ab8e2a?w=900&auto=format&fit=crop&q=85','Robin','Birds','Himachal Pradesh','Robin,Small Bird,Branch')">
+        <img src="https://images.unsplash.com/photo-1599254615628-e58c34ab8e2a?w=500&auto=format&fit=crop&q=80"
+          alt="Robin" loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Birds</span><span class="p-name">Indian Robin</span><span
+            class="p-loc">📍 Himachal</span></div>
+      </div>
+      <div class="photo-item" data-cat="birds"
+        onclick="openLB('https://images.unsplash.com/photo-1502318217862-aa4e294ba657?w=900&auto=format&fit=crop&q=85','Duck','Birds','Kaziranga','Duck,Water,Reflection')">
+        <img src="https://images.unsplash.com/photo-1502318217862-aa4e294ba657?w=500&auto=format&fit=crop&q=80"
+          alt="Duck" loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Birds</span><span class="p-name">Wild Duck</span><span
+            class="p-loc">📍 Kaziranga</span></div>
+      </div>
+      <div class="photo-item" data-cat="birds"
+        onclick="openLB('https://images.unsplash.com/photo-1575916285237-c12ab843c272?w=900&auto=format&fit=crop&q=85','Kingfisher','Birds','Kerala Backwaters','Kingfisher,Dive,Colour')">
+        <img src="https://images.unsplash.com/photo-1575916285237-c12ab843c272?w=500&auto=format&fit=crop&q=80"
+          alt="Kingfisher" loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Birds</span><span class="p-name">Kingfisher</span><span
+            class="p-loc">📍 Kerala</span></div>
+      </div>
+
+      <div class="photo-item" data-cat="animals"
+        onclick="openLB('https://images.unsplash.com/photo-1561731216-c3a4d99437d5?w=900&auto=format&fit=crop&q=85','Bengal Tiger','Animals','Bandhavgarh, India','Tiger,Stripes,Golden Hour')">
+        <img src="https://images.unsplash.com/photo-1561731216-c3a4d99437d5?w=500&auto=format&fit=crop&q=80" alt="Tiger"
+          loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Animals</span><span class="p-name">Bengal Tiger</span><span
+            class="p-loc">📍 Bandhavgarh</span></div>
+      </div>
+      <div class="photo-item" data-cat="animals"
+        onclick="openLB('https://images.unsplash.com/photo-1564760055775-d63b17a55c44?w=900&auto=format&fit=crop&q=85','Lion','Animals','Masai Mara, Kenya','Lion,Pride,Savanna')">
+        <img src="https://images.unsplash.com/photo-1564760055775-d63b17a55c44?w=500&auto=format&fit=crop&q=80"
+          alt="Lion" loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Animals</span><span class="p-name">African Lion</span><span
+            class="p-loc">📍 Masai Mara</span></div>
+      </div>
+      <div class="photo-item" data-cat="animals"
+        onclick="openLB('https://images.unsplash.com/photo-1516912481808-3406841bd33c?w=900&auto=format&fit=crop&q=85','Elephant','Animals','Kaziranga, India','Elephant,Herd,Grassland')">
+        <img src="https://images.unsplash.com/photo-1516912481808-3406841bd33c?w=500&auto=format&fit=crop&q=80"
+          alt="Elephant" loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Animals</span><span class="p-name">Asian Elephant</span><span
+            class="p-loc">📍 Kaziranga</span></div>
+      </div>
+      <div class="photo-item" data-cat="animals"
+        onclick="openLB('https://images.unsplash.com/photo-1474511320723-9a56873867b5?w=900&auto=format&fit=crop&q=85','Fox','Animals','Thar Desert, Rajasthan','Fox,Desert,Portrait')">
+        <img src="https://images.unsplash.com/photo-1474511320723-9a56873867b5?w=500&auto=format&fit=crop&q=80"
+          alt="Fox" loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Animals</span><span class="p-name">Red Fox</span><span
+            class="p-loc">📍 Rajasthan</span></div>
+      </div>
+      <div class="photo-item" data-cat="animals"
+        onclick="openLB('https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?w=900&auto=format&fit=crop&q=85','Turtle','Animals','Andaman Islands','Turtle,Marine,Ocean')">
+        <img src="https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?w=500&auto=format&fit=crop&q=80"
+          alt="Turtle" loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Animals</span><span class="p-name">Sea Turtle</span><span
+            class="p-loc">📍 Andaman</span></div>
+      </div>
+      <div class="photo-item" data-cat="animals"
+        onclick="openLB('https://images.unsplash.com/photo-1503431128871-cd250803fa41?w=900&auto=format&fit=crop&q=85','Cheetah','Animals','Serengeti, Africa','Cheetah,Spotted,Speed')">
+        <img src="https://images.unsplash.com/photo-1503431128871-cd250803fa41?w=500&auto=format&fit=crop&q=80"
+          alt="Cheetah" loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Animals</span><span class="p-name">Cheetah</span><span
+            class="p-loc">📍 Serengeti</span></div>
+      </div>
+      <div class="photo-item" data-cat="animals"
+        onclick="openLB('https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=900&auto=format&fit=crop&q=85','Deer','Animals','Ranthambore, India','Deer,Spotted,Forest')">
+        <img src="https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=500&auto=format&fit=crop&q=80"
+          alt="Deer" loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Animals</span><span class="p-name">Spotted Deer</span><span
+            class="p-loc">📍 Ranthambore</span></div>
+      </div>
+      <div class="photo-item" data-cat="animals"
+        onclick="openLB('https://images.unsplash.com/photo-1570797197190-8e003a00c846?w=900&auto=format&fit=crop&q=85','Wolf','Animals','Ladakh, India','Wolf,Mountain,Pack')">
+        <img src="https://images.unsplash.com/photo-1570797197190-8e003a00c846?w=500&auto=format&fit=crop&q=80"
+          alt="Wolf" loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Animals</span><span class="p-name">Mountain Wolf</span><span
+            class="p-loc">📍 Ladakh</span></div>
+      </div>
+      <div class="photo-item" data-cat="animals"
+        onclick="openLB('https://images.unsplash.com/photo-1551316679-9c6ae9dec224?w=900&auto=format&fit=crop&q=85','Bear','Animals','Himalayan Foothills','Bear,Mountain,Omnivore')">
+        <img src="https://images.unsplash.com/photo-1551316679-9c6ae9dec224?w=500&auto=format&fit=crop&q=80" alt="Bear"
+          loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Animals</span><span class="p-name">Brown Bear</span><span
+            class="p-loc">📍 Himalayas</span></div>
+      </div>
+      <div class="photo-item" data-cat="animals"
+        onclick="openLB('https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=900&auto=format&fit=crop&q=85','Giraffe','Animals','Masai Mara, Kenya','Giraffe,Tall,Africa')">
+        <img src="https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=500&auto=format&fit=crop&q=80"
+          alt="Giraffe" loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Animals</span><span class="p-name">Giraffe</span><span
+            class="p-loc">📍 Kenya</span></div>
+      </div>
+
+      <div class="photo-item" data-cat="nature"
+        onclick="openLB('https://images.unsplash.com/photo-1500479694472-551d1fb6258d?w=900&auto=format&fit=crop&q=85','Safari Sunrise','Nature','Masai Mara, Kenya','Sunrise,Safari,Silhouette')">
+        <img src="https://images.unsplash.com/photo-1500479694472-551d1fb6258d?w=500&auto=format&fit=crop&q=80"
+          alt="Sunrise" loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Nature</span><span class="p-name">Safari Sunrise</span><span
+            class="p-loc">📍 Masai Mara</span></div>
+      </div>
+      <div class="photo-item" data-cat="nature"
+        onclick="openLB('https://images.unsplash.com/photo-1504173010664-32509107de0c?w=900&auto=format&fit=crop&q=85','Ancient Forest','Nature','Namdapha, Arunachal','Forest,Fog,Trees')">
+        <img src="https://images.unsplash.com/photo-1504173010664-32509107de0c?w=500&auto=format&fit=crop&q=80"
+          alt="Forest" loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Nature</span><span class="p-name">Ancient Forest</span><span
+            class="p-loc">📍 Namdapha</span></div>
+      </div>
+      <div class="photo-item" data-cat="nature"
+        onclick="openLB('https://images.unsplash.com/photo-1501854140801-50d01698950b?w=900&auto=format&fit=crop&q=85','Mountain Lake','Nature','Sikkim, India','Mountain,Lake,Reflection')">
+        <img src="https://images.unsplash.com/photo-1501854140801-50d01698950b?w=500&auto=format&fit=crop&q=80"
+          alt="Mountain" loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Nature</span><span class="p-name">Himalayan Lake</span><span
+            class="p-loc">📍 Sikkim</span></div>
+      </div>
+      <div class="photo-item" data-cat="nature"
+        onclick="openLB('https://images.unsplash.com/photo-1448375240586-882707db888b?w=900&auto=format&fit=crop&q=85','Dark Forest','Nature','Western Ghats','Forest,Dark,Moody')">
+        <img src="https://images.unsplash.com/photo-1448375240586-882707db888b?w=500&auto=format&fit=crop&q=80"
+          alt="Dark Forest" loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Nature</span><span class="p-name">Dark Forest</span><span
+            class="p-loc">📍 Western Ghats</span></div>
+      </div>
+      <div class="photo-item" data-cat="nature"
+        onclick="openLB('https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=900&auto=format&fit=crop&q=85','Waterfall','Nature','Coorg, Karnataka','Waterfall,Mist,Green')">
+        <img src="https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=500&auto=format&fit=crop&q=80"
+          alt="Waterfall" loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Nature</span><span class="p-name">Jungle Waterfall</span><span
+            class="p-loc">📍 Coorg</span></div>
+      </div>
+      <div class="photo-item" data-cat="nature"
+        onclick="openLB('https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=900&auto=format&fit=crop&q=85','Green Trees','Nature','Meghalaya, India','Trees,Green,Lush')">
+        <img src="https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=500&auto=format&fit=crop&q=80"
+          alt="Trees" loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Nature</span><span class="p-name">Green Canopy</span><span
+            class="p-loc">📍 Meghalaya</span></div>
+      </div>
+      <div class="photo-item" data-cat="nature"
+        onclick="openLB('https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=900&auto=format&fit=crop&q=85','Sunset Landscape','Nature','Rajasthan, India','Sunset,Desert,Dunes')">
+        <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=500&auto=format&fit=crop&q=80"
+          alt="Sunset" loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Nature</span><span class="p-name">Desert Sunset</span><span
+            class="p-loc">📍 Rajasthan</span></div>
+      </div>
+      <div class="photo-item" data-cat="nature"
+        onclick="openLB('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=900&auto=format&fit=crop&q=85','Ocean Coast','Nature','Andaman Islands','Ocean,Coast,Waves')">
+        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&auto=format&fit=crop&q=80"
+          alt="Ocean" loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Nature</span><span class="p-name">Andaman Coast</span><span
+            class="p-loc">📍 Andaman</span></div>
+      </div>
+      <div class="photo-item" data-cat="nature"
+        onclick="openLB('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&auto=format&fit=crop&q=85','Snow Mountain','Nature','Leh Ladakh','Snow,Peak,Himalaya')">
+        <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500&auto=format&fit=crop&q=80"
+          alt="Snow Mountain" loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Nature</span><span class="p-name">Snow Peaks</span><span
+            class="p-loc">📍 Ladakh</span></div>
+      </div>
+      <div class="photo-item" data-cat="nature"
+        onclick="openLB('https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=900&auto=format&fit=crop&q=85','Green Hills','Nature','Munnar, Kerala','Hills,Tea,Green')">
+        <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=500&auto=format&fit=crop&q=80"
+          alt="Hills" loading="lazy">
+        <div class="photo-overlay"><span class="p-cat">Nature</span><span class="p-name">Tea Hills</span><span
+            class="p-loc">📍 Munnar</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="lb" id="lb" onclick="closeLBOutside(event)">
+    <button class="lb-close" onclick="closeLB()">✕</button>
+    <div class="lb-wrap">
+      <img class="lb-img" id="lb-img" src="" alt="">
+      <div class="lb-info">
+        <div class="lb-cat" id="lb-cat"></div>
+        <div class="lb-title" id="lb-title"></div>
+        <div class="lb-location" id="lb-loc"></div>
+        <div class="lb-tags" id="lb-tags"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand"><a href="index.html" class="logo">Wild<span>Lens</span></a>
+        <p>Professional wildlife photography education for aspiring naturalists worldwide.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Learn</h4>
+        <ul>
+          <li><a href="courses.html">Courses</a></li>
+          <li><a href="videos.html">Videos</a></li>
+          <li><a href="blog.html">Blog</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="gallery.html">Gallery</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Follow</h4>
+        <ul>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">YouTube</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 WildLens Photography.</p>
+      <p style="color:rgba(124,179,66,.5)">Photos: Unsplash (Free)</p>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+  <script>
+    function openLB(img, title, cat, loc, tags) {
+      document.getElementById('lb-img').src = img;
+      document.getElementById('lb-title').textContent = title;
+      document.getElementById('lb-cat').textContent = cat;
+      document.getElementById('lb-loc').textContent = '📍 ' + loc;
+      document.getElementById('lb-tags').innerHTML = tags.split(',').map(t => `<span class="lb-tag">${t.trim()}</span>`).join('');
+      document.getElementById('lb').classList.add('open');
+    }
+    function closeLB() { document.getElementById('lb').classList.remove('open'); }
+    function closeLBOutside(e) { if (e.target === document.getElementById('lb')) closeLB(); }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLB(); });
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const cat = btn.dataset.cat;
+        document.querySelectorAll('.photo-item').forEach(item => {
+          item.style.display = (cat === 'all' || item.dataset.cat === cat) ? '' : 'none';
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>
